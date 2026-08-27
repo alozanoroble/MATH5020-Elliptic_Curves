@@ -35,13 +35,6 @@ construction, and compute P, 2P, …, nP for a chosen point.
 Just open [`index.html`](index.html) in a browser, or serve the folder with
 any static file server. There is nothing to install or build.
 
-## Enabling the live demo
-
-This app is served straight from the repo via GitHub Pages. If the link
-above isn't live yet, turn it on once in **Settings → Pages**: set the
-source to the `main` branch, `/(root)` folder. The whole repo is then
-served as static files, so this page appears at
-`/apps/rational-points/`.
 
 ## The math, briefly
 
