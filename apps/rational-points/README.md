@@ -11,7 +11,7 @@ points, click two of them to add them via the classic chord-and-tangent
 construction, and compute P, 2P, …, nP for a chosen point.
 
 **[Live demo](https://alozanoroble.github.io/MATH5020-Elliptic_Curves/apps/rational-points/)**
-(once GitHub Pages is enabled for this repo — see below).
+
 
 ## Features
 
