@@ -1,6 +1,6 @@
 # Rational Points
 
-A single-page applet for exploring the group law on an elliptic curve
+A single-page applet (created with Claude Code) for exploring the group law on an elliptic curve
 
 ```
 y² = x³ + ax + b
