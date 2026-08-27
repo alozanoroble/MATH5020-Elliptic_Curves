@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Rational Points</title>
+<meta name="description" content="Add and multiply rational points on an elliptic curve y² = x³ + ax + b, with exact fraction arithmetic and a live secant/tangent construction." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Karla:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --bg:#eef2ef;
+    --surface:#ffffff;
+    --surface-2:#e2e9e4;
+    --ink:#182722;
+    --muted:#5c716a;
+    --line:#cbd6cf;
+    --accent:#1f6f5c;
+    --accent-soft:#dcece6;
+    --accent-ink:#ffffff;
+    --gold:#a8721f;
+    --gold-soft:#f3e3c8;
+    --danger:#a8402a;
+    --danger-soft:#f5ddd6;
+    --radius-lg:18px;
+    --radius-md:12px;
+    --radius-sm:8px;
+    --font-display:'Fraunces', Georgia, 'Times New Roman', serif;
+    --font-body:'Karla', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-mono:'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+    --shadow: 0 1px 2px rgba(20,30,26,0.06), 0 8px 24px -12px rgba(20,30,26,0.18);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0d1513;
+      --surface:#141f1c;
+      --surface-2:#1b2925;
+      --ink:#e6ede9;
+      --muted:#93a89f;
+      --line:#28372f;
+      --accent:#4fd3ac;
+      --accent-soft:#173229;
+      --accent-ink:#04231c;
+      --gold:#f0ac52;
+      --gold-soft:#2e2413;
+      --danger:#ff8a68;
+      --danger-soft:#331e18;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 12px 32px -16px rgba(0,0,0,0.6);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0d1513;
+    --surface:#141f1c;
+    --surface-2:#1b2925;
+    --ink:#e6ede9;
+    --muted:#93a89f;
+    --line:#28372f;
+    --accent:#4fd3ac;
+    --accent-soft:#173229;
+    --accent-ink:#04231c;
+    --gold:#f0ac52;
+    --gold-soft:#2e2413;
+    --danger:#ff8a68;
+    --danger-soft:#331e18;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 12px 32px -16px rgba(0,0,0,0.6);
+  }
+
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--font-body);
+    font-size:16px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .page{
+    max-width:1120px;
+    margin:0 auto;
+    padding:2.75rem 1.5rem 5rem;
+  }
+
+  header.hero{
+    display:flex;
+    flex-direction:column;
+    gap:0.6rem;
+    margin-bottom:2.25rem;
+  }
+  .kicker{
+    font-family:var(--font-mono);
+    font-size:0.78rem;
+    letter-spacing:0.11em;
+    text-transform:uppercase;
+    color:var(--accent);
+  }
+  h1{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:clamp(2.1rem, 4vw, 3rem);
+    line-height:1.05;
+    margin:0;
+    text-wrap:balance;
+    letter-spacing:-0.01em;
+  }
+  .lede{
+    max-width:62ch;
+    color:var(--muted);
+    font-size:1.05rem;
+    text-wrap:pretty;
+  }
+
+  .card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius-lg);
+    box-shadow:var(--shadow);
+    padding:1.5rem;
+  }
+  .card + .card{ margin-top:1.5rem; }
+  .card h2{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:1.3rem;
+    margin:0 0 0.2rem;
+  }
+  .card .card-sub{
+    color:var(--muted);
+    font-size:0.92rem;
+    margin:0 0 1.1rem;
+  }
+
+  /* --- curve setup --- */
+  .equation-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:1rem;
+    margin-bottom:1.25rem;
+  }
+  .equation{
+    font-family:var(--font-display);
+    font-size:clamp(1.5rem, 3vw, 2.1rem);
+    font-weight:500;
+    font-variant-numeric:tabular-nums;
+  }
+  .equation sup{ font-size:0.62em; }
+  .pill{
+    display:inline-flex;
+    align-items:center;
+    gap:0.4rem;
+    font-family:var(--font-mono);
+    font-size:0.78rem;
+    letter-spacing:0.02em;
+    padding:0.35rem 0.7rem;
+    border-radius:999px;
+    background:var(--accent-soft);
+    color:var(--accent);
+    border:1px solid transparent;
+    white-space:nowrap;
+  }
+  .pill.bad{ background:var(--danger-soft); color:var(--danger); }
+  .pill::before{
+    content:"";
+    width:0.5rem; height:0.5rem;
+    border-radius:50%;
+    background:currentColor;
+  }
+
+  .field-row{
+    display:flex;
+    gap:0.9rem;
+    flex-wrap:wrap;
+    align-items:flex-end;
+  }
+  .field{
+    display:flex;
+    flex-direction:column;
+    gap:0.35rem;
+  }
+  .field label{
+    font-size:0.78rem;
+    color:var(--muted);
+    font-weight:600;
+    letter-spacing:0.02em;
+  }
+  input[type="text"], input[type="number"], select{
+    font-family:var(--font-mono);
+    font-size:0.95rem;
+    background:var(--surface-2);
+    color:var(--ink);
+    border:1px solid var(--line);
+    border-radius:var(--radius-sm);
+    padding:0.55rem 0.7rem;
+    min-width:0;
+  }
+  input[type="text"]{ width:6.5rem; }
+  input[type="number"]{ width:5.5rem; }
+  select{ font-family:var(--font-body); padding-right:1.6rem; }
+  input:focus-visible, select:focus-visible, button:focus-visible, .chip:focus-visible{
+    outline:2px solid var(--accent);
+    outline-offset:2px;
+  }
+
+  button{
+    font-family:var(--font-body);
+    font-weight:600;
+    font-size:0.92rem;
+    border-radius:var(--radius-sm);
+    border:1px solid transparent;
+    padding:0.6rem 1.05rem;
+    cursor:pointer;
+    transition:transform 0.08s ease, filter 0.15s ease;
+  }
+  button.primary{ background:var(--accent); color:var(--accent-ink); }
+  button.primary:hover{ filter:brightness(1.06); }
+  button.ghost{ background:transparent; color:var(--ink); border-color:var(--line); }
+  button.ghost:hover{ background:var(--surface-2); }
+  button:disabled{ opacity:0.45; cursor:not-allowed; }
+  button:active:not(:disabled){ transform:translateY(1px); }
+
+  .preset-row{
+    display:flex; gap:0.9rem; align-items:flex-end; flex-wrap:wrap;
+    margin-top:1rem; padding-top:1rem; border-top:1px dashed var(--line);
+  }
+
+  details.advanced{ margin-top:1rem; }
+  details.advanced summary{
+    cursor:pointer; font-size:0.85rem; color:var(--muted); font-weight:600;
+    list-style:none;
+  }
+  details.advanced summary::-webkit-details-marker{ display:none; }
+  details.advanced summary::before{ content:"▸ "; }
+  details.advanced[open] summary::before{ content:"▾ "; }
+  details.advanced .field-row{ margin-top:0.9rem; }
+
+  .error-msg{
+    color:var(--danger);
+    font-family:var(--font-mono);
+    font-size:0.85rem;
+    margin-top:0.6rem;
+  }
+
+  /* --- workbench --- */
+  .workbench{
+    display:grid;
+    grid-template-columns:1.25fr 1fr;
+    gap:1.5rem;
+    align-items:start;
+  }
+  @media (max-width:900px){
+    .workbench{ grid-template-columns:1fr; }
+  }
+
+  .plot-wrap{ position:relative; }
+  svg#plot{
+    width:100%; height:auto; display:block; border-radius:var(--radius-md);
+    cursor:grab; touch-action:none; background:var(--surface-2);
+  }
+  svg#plot.dragging{ cursor:grabbing; }
+  .plot-toolbar{
+    display:flex; justify-content:space-between; align-items:center;
+    flex-wrap:wrap; gap:0.6rem; margin-bottom:0.7rem;
+  }
+  .zoom-controls{ display:flex; gap:0.4rem; align-items:center; flex-wrap:wrap; }
+  .btn-icon{
+    width:2.15rem; height:2.15rem; padding:0;
+    display:inline-flex; align-items:center; justify-content:center;
+    font-family:var(--font-mono); font-size:1.1rem; line-height:1;
+  }
+  .plot-hint{ font-size:0.78rem; color:var(--muted); font-family:var(--font-mono); }
+  .legend{
+    display:flex; gap:1.1rem; flex-wrap:wrap;
+    margin-top:0.9rem; font-size:0.82rem; color:var(--muted);
+  }
+  .legend span{ display:inline-flex; align-items:center; gap:0.4rem; }
+  .swatch{ width:0.7rem; height:0.7rem; border-radius:50%; display:inline-block; }
+  .swatch.ring{ background:var(--surface); border:2px solid var(--gold); box-sizing:border-box; }
+
+  .point-list{
+    display:flex; flex-wrap:wrap; gap:0.5rem;
+    margin-top:0.9rem;
+  }
+  .chip{
+    font-family:var(--font-mono);
+    font-size:0.85rem;
+    background:var(--surface-2);
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:0.45rem 0.85rem;
+    cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    gap:0.4rem;
+    color:var(--ink);
+    transition:border-color 0.12s ease, background 0.12s ease;
+  }
+  .chip:hover{ border-color:var(--accent); }
+  .chip .tag{
+    font-family:var(--font-body); font-weight:700; font-size:0.72rem;
+    background:var(--muted); color:var(--surface);
+    border-radius:5px; padding:0.05rem 0.35rem;
+  }
+  .chip.selected{ background:var(--accent-soft); border-color:var(--accent); color:var(--accent); }
+  .chip.selected .tag{ background:var(--accent); color:var(--accent-ink); }
+  .chip.result{ border-color:var(--gold); }
+  .chip.result .tag{ background:var(--gold); color:var(--accent-ink); }
+  .chip.empty-state{ cursor:default; color:var(--muted); border-style:dashed; }
+
+  .selection-info{
+    margin-top:1.1rem;
+    padding-top:1.1rem;
+    border-top:1px dashed var(--line);
+    font-size:0.9rem;
+    color:var(--muted);
+  }
+  .selection-info strong{ color:var(--ink); }
+  .action-row{ display:flex; gap:0.7rem; margin-top:0.8rem; flex-wrap:wrap; }
+
+  .result-box{
+    margin-top:1rem;
+    background:var(--gold-soft);
+    border:1px solid color-mix(in srgb, var(--gold) 45%, transparent);
+    border-radius:var(--radius-md);
+    padding:1rem 1.1rem;
+  }
+  .result-box .result-eq{
+    font-family:var(--font-mono);
+    font-size:1.02rem;
+    font-weight:600;
+    color:var(--ink);
+    font-variant-numeric:tabular-nums;
+  }
+  .result-box .result-dec{
+    font-family:var(--font-mono);
+    font-size:0.8rem;
+    color:var(--muted);
+    margin-top:0.3rem;
+  }
+  .result-box .action-row{ margin-top:0.8rem; }
+
+  /* --- multiples table --- */
+  table.mult-table{
+    width:100%;
+    border-collapse:collapse;
+    font-family:var(--font-mono);
+    font-size:0.88rem;
+    margin-top:1rem;
+  }
+  table.mult-table th{
+    text-align:left;
+    font-family:var(--font-body);
+    font-weight:600;
+    font-size:0.78rem;
+    letter-spacing:0.02em;
+    color:var(--muted);
+    border-bottom:1px solid var(--line);
+    padding:0.5rem 0.6rem;
+  }
+  table.mult-table td{
+    padding:0.55rem 0.6rem;
+    border-bottom:1px solid var(--line);
+    font-variant-numeric:tabular-nums;
+    word-break:break-word;
+  }
+  table.mult-table tr:last-child td{ border-bottom:none; }
+  .mult-table .n-col{ color:var(--accent); font-weight:600; width:3.5rem; }
+  .table-scroll{ overflow-x:auto; }
+
+  .how-it-works{
+    margin-top:0.5rem;
+  }
+  .how-it-works summary{
+    cursor:pointer; font-weight:600; font-size:0.95rem;
+  }
+  .how-it-works .body{
+    margin-top:0.8rem; color:var(--muted); font-size:0.92rem;
+  }
+  .how-it-works .body p{ margin:0 0 0.7rem; }
+  .how-it-works .body p:last-child{ margin-bottom:0; }
+
+  footer{
+    margin-top:2.5rem;
+    padding-top:1.5rem;
+    border-top:1px solid var(--line);
+    color:var(--muted);
+    font-size:0.85rem;
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:0.5rem;
+  }
+  footer a{ color:var(--accent); }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition:none !important; animation:none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="hero">
+    <span class="kicker">y² = x³ + ax + b, over ℚ</span>
+    <h1>Rational Points</h1>
+    <p class="lede">Pick a curve, search for rational points, then click two of them to watch the chord-and-tangent group law add them together — with exact fraction arithmetic, no rounding.</p>
+  </header>
+
+  <section class="card" id="curveCard">
+    <h2>The curve</h2>
+    <p class="card-sub">Weierstrass form, coefficients may be integers or fractions like <code>-3/4</code>.</p>
+
+    <div class="equation-row">
+      <div class="equation" id="equationDisplay">y² = x³ + 0x + 17</div>
+      <span class="pill" id="curveStatus">smooth curve</span>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label for="aInput">a</label>
+        <input type="text" id="aInput" value="0" inputmode="text" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="field">
+        <label for="bInput">b</label>
+        <input type="text" id="bInput" value="17" inputmode="text" autocomplete="off" spellcheck="false">
+      </div>
+      <button class="primary" id="loadCurveBtn">Set curve</button>
+    </div>
+
+    <div class="preset-row">
+      <div class="field">
+        <label for="presetSelect">Try a known curve</label>
+        <select id="presetSelect">
+          <option value="">— presets —</option>
+          <option value="0,17">y² = x³ + 17 · several small points</option>
+          <option value="0,-2">y² = x³ − 2 · one generator, watch it grow</option>
+          <option value="-1,0">y² = x³ − x · three 2-torsion points</option>
+          <option value="-25,0">y² = x³ − 25x · congruent number curve, n=5</option>
+          <option value="1,-1">y² = x³ + x − 1 · rank-1 curve</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="maxNumInput">numerator range</label>
+        <input type="number" id="maxNumInput" value="12" min="1" max="60">
+      </div>
+      <div class="field">
+        <label for="maxDenInput">max denominator</label>
+        <input type="number" id="maxDenInput" value="4" min="1" max="12">
+      </div>
+      <button class="ghost" id="searchBtn">Search points</button>
+    </div>
+
+    <div class="error-msg" id="curveError" hidden></div>
+  </section>
+
+  <div class="workbench">
+    <section class="card plot-card">
+      <h2>Curve &amp; points</h2>
+      <p class="card-sub">Real locus over ℝ, with every rational point found so far.</p>
+      <div class="plot-wrap">
+        <div class="plot-toolbar">
+          <div class="zoom-controls">
+            <button type="button" class="ghost btn-icon" id="zoomOutBtn" aria-label="Zoom out">−</button>
+            <button type="button" class="ghost btn-icon" id="zoomInBtn" aria-label="Zoom in">+</button>
+            <button type="button" class="ghost" id="fitBtn">Fit to points</button>
+            <button type="button" class="ghost" id="clearPointsBtn">Clear points</button>
+          </div>
+          <span class="plot-hint">drag to pan · scroll to zoom · dbl-click to zoom in</span>
+        </div>
+        <svg id="plot" viewBox="0 0 640 480" preserveAspectRatio="xMidYMid meet" role="img" tabindex="0" aria-label="Plot of the elliptic curve with marked rational points. Drag to pan, scroll to zoom, double-click to zoom in. When focused: arrow keys pan, plus and minus keys zoom, zero resets the view."></svg>
+      </div>
+      <div class="legend">
+        <span><span class="swatch" style="background:var(--accent)"></span>found point</span>
+        <span><span class="swatch" style="background:var(--gold)"></span>result of an addition</span>
+        <span><span class="swatch ring"></span>multiple of P</span>
+        <span><span class="swatch" style="background:var(--muted)"></span>construction line</span>
+      </div>
+    </section>
+
+    <section class="card list-card">
+      <h2>Rational points</h2>
+      <p class="card-sub" id="pointCountLabel">Search to populate this list.</p>
+      <div class="point-list" id="pointList">
+        <span class="chip empty-state">no points yet</span>
+      </div>
+
+      <div class="selection-info" id="selectionInfo">Select one or two points below to add them.</div>
+      <div class="action-row" id="actionRow"></div>
+
+      <div class="result-box" id="resultBox" hidden>
+        <div class="result-eq" id="resultEq"></div>
+        <div class="result-dec" id="resultDec"></div>
+        <div class="action-row">
+          <button class="ghost" id="addResultBtn">Add result to point list</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <section class="card" id="multiplesCard">
+    <h2>Multiples of a point</h2>
+    <p class="card-sub">Pick a point P from the list, then compute P, 2P, 3P, … up to nP by repeated addition.</p>
+
+    <div class="field-row">
+      <div class="field">
+        <label for="multBaseSelect">base point P</label>
+        <select id="multBaseSelect"><option value="">select a point first</option></select>
+      </div>
+      <div class="field">
+        <label for="nInput">n</label>
+        <input type="number" id="nInput" value="6" min="1" max="40">
+      </div>
+      <button class="primary" id="multBtn">Compute multiples</button>
+    </div>
+
+    <div class="table-scroll">
+      <table class="mult-table" id="multTable" hidden>
+        <thead><tr><th>n</th><th>nP</th><th>decimal</th></tr></thead>
+        <tbody id="multTableBody"></tbody>
+      </table>
+    </div>
+    <div class="action-row">
+      <button class="ghost" id="plotMultBtn" disabled>Plot multiples on graph</button>
+    </div>
+  </section>
+
+  <details class="how-it-works card">
+    <summary>How does point addition work?</summary>
+    <div class="body">
+      <p>Three points on a Weierstrass curve that lie on a common line always sum to the identity, the point at infinity 𝒪. So to add P and Q: draw the line through them, find the third point R′ where it crosses the curve, then reflect R′ over the x-axis to get P + Q. To double a point P, use the tangent line at P instead of a secant.</p>
+      <p>This gives the curve's points the structure of an abelian group. Coordinates are kept as exact fractions throughout (via JavaScript BigInt), so results are never rounded — only the plot is drawn in floating point.</p>
+      <p>The point search only checks x = p/q with |p| and q bounded by the numerator range and max denominator above, so it can miss rational points with larger height — it is a demonstration, not a complete search.</p>
+    </div>
+  </details>
+
+  <footer>
+    <span>Built with vanilla JS and exact rational arithmetic — no dependencies.</span>
+    <span id="themeNote"></span>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* ---------------- exact fraction arithmetic ---------------- */
+
+function gcdBig(a,b){ a = a<0n?-a:a; b = b<0n?-b:b; while(b){ [a,b] = [b, a % b]; } return a; }
+
+class Frac{
+  constructor(n, d = 1n){
+    if(typeof n === "number") n = BigInt(n);
+    if(typeof d === "number") d = BigInt(d);
+    if(d === 0n) throw new Error("denominator is zero");
+    if(d < 0n){ n = -n; d = -d; }
+    const g = gcdBig(n, d) || 1n;
+    this.n = n / g;
+    this.d = d / g;
+  }
+  add(o){ return new Frac(this.n*o.d + o.n*this.d, this.d*o.d); }
+  sub(o){ return new Frac(this.n*o.d - o.n*this.d, this.d*o.d); }
+  mul(o){ return new Frac(this.n*o.n, this.d*o.d); }
+  div(o){ if(o.n === 0n) throw new Error("division by zero"); return new Frac(this.n*o.d, this.d*o.n); }
+  neg(){ return new Frac(-this.n, this.d); }
+  isZero(){ return this.n === 0n; }
+  eq(o){ return this.n === o.n && this.d === o.d; }
+  cmp(o){ const l = this.n*o.d, r = o.n*this.d; return l<r ? -1 : (l>r ? 1 : 0); }
+  toNumber(){ return Number(this.n)/Number(this.d); }
+  toString(){ return this.d === 1n ? this.n.toString() : (this.n.toString() + "/" + this.d.toString()); }
+}
+const F0 = new Frac(0n), F2 = new Frac(2n), F3 = new Frac(3n), F4 = new Frac(4n), F27 = new Frac(27n);
+
+function isqrtBig(n){
+  if(n < 0n) return null;
+  if(n < 2n) return n;
+  let x0 = n, x1 = (x0 + 1n) >> 1n;
+  while(x1 < x0){ x0 = x1; x1 = (x0 + n/x0) >> 1n; }
+  return x0;
+}
+function sqrtFrac(f){
+  if(f.n < 0n) return null;
+  const sn = isqrtBig(f.n); if(sn*sn !== f.n) return null;
+  const sd = isqrtBig(f.d); if(sd*sd !== f.d) return null;
+  return new Frac(sn, sd);
+}
+function parseFrac(str){
+  str = String(str).trim();
+  if(str === "") throw new Error("enter a value");
+  const m = str.match(/^(-?\d+)\s*\/\s*(-?\d+)$/);
+  if(m) return new Frac(BigInt(m[1]), BigInt(m[2]));
+  if(/^-?\d+$/.test(str)) return new Frac(BigInt(str));
+  throw new Error("\"" + str + "\" isn't an integer or fraction like -3/4");
+}
+
+/* ---------------- curve + group law ---------------- */
+
+const INF = "INF";
+
+function rhs(curve, x){ return x.mul(x).mul(x).add(curve.a.mul(x)).add(curve.b); }
+function isSingular(curve){ return curve.a.mul(curve.a).mul(curve.a).mul(F4).add(curve.b.mul(curve.b).mul(F27)).isZero(); }
+
+function negate(P){ return P === INF ? INF : { x: P.x, y: P.y.neg() }; }
+
+function addPoints(P, Q, curve){
+  if(P === INF) return Q;
+  if(Q === INF) return P;
+  if(P.x.eq(Q.x)){
+    if(P.y.add(Q.y).isZero()) return INF;
+    if(P.y.isZero()) return INF;
+    const m = F3.mul(P.x).mul(P.x).add(curve.a).div(F2.mul(P.y));
+    const x3 = m.mul(m).sub(F2.mul(P.x));
+    const y3 = m.mul(P.x.sub(x3)).sub(P.y);
+    return { x: x3, y: y3 };
+  }
+  const m = Q.y.sub(P.y).div(Q.x.sub(P.x));
+  const x3 = m.mul(m).sub(P.x).sub(Q.x);
+  const y3 = m.mul(P.x.sub(x3)).sub(P.y);
+  return { x: x3, y: y3 };
+}
+
+function multiply(P, nBig, curve){
+  if(nBig === 0n || P === INF) return INF;
+  let neg = false;
+  if(nBig < 0n){ neg = true; nBig = -nBig; }
+  let result = INF, addend = P, n = nBig;
+  while(n > 0n){
+    if(n & 1n) result = addPoints(result, addend, curve);
+    addend = addPoints(addend, addend, curve);
+    n >>= 1n;
+  }
+  return neg ? negate(result) : result;
+}
+
+function searchPoints(curve, maxNum, maxDen, cap){
+  const found = [];
+  const seen = new Set();
+  const MN = BigInt(maxNum), MD = BigInt(maxDen);
+  outer:
+  for(let q = 1n; q <= MD; q++){
+    for(let p = -MN; p <= MN; p++){
+      if(gcdBig(p, q) !== 1n) continue;
+      const x = new Frac(p, q);
+      const y = sqrtFrac(rhs(curve, x));
+      if(y === null) continue;
+      const k1 = x.toString() + "," + y.toString();
+      if(!seen.has(k1)){ seen.add(k1); found.push({ x, y }); if(found.length >= cap) break outer; }
+      if(!y.isZero()){
+        const yn = y.neg();
+        const k2 = x.toString() + "," + yn.toString();
+        if(!seen.has(k2)){ seen.add(k2); found.push({ x, y: yn }); if(found.length >= cap) break outer; }
+      }
+    }
+  }
+  found.sort((A,B) => A.x.cmp(B.x) || A.y.cmp(B.y));
+  return found;
+}
+
+/* ---------------- app state ---------------- */
+
+const state = {
+  curve: { a: new Frac(0n), b: new Frac(17n) },
+  points: [],       // {x:Frac, y:Frac, label, origin:"search"|"sum"}
+  selectedIds: [],  // labels currently selected (max 2), INF uses label "O"
+  lastResult: null, // {point, label sources, isDouble}
+  lastConstruction: null, // {P,Q,thirdRaw} for plotting the secant/tangent
+  view: null, // {xmin,xmax,ymin,ymax} visible plot window, null = fit to points on next render
+  pointsVisible: true, // toggled off by "Clear points", back on by any action that plots something
+  lastMultiples: [], // [{n, label, point}] from the most recent "Compute multiples"
+  plottedMultiples: [] // [{n, baseLabel, point}] currently drawn on the plot
+};
+
+function nextLabel(){
+  const used = new Set(state.points.map(p => p.label));
+  const letters = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+  for(let round = 1; round < 6; round++){
+    for(const ch of letters){
+      const cand = round === 1 ? ch : (ch + round);
+      if(!used.has(cand)) return cand;
+    }
+  }
+  return "P" + (state.points.length + 1);
+}
+
+function findPointByLabel(label){
+  if(label === "O") return INF;
+  const rec = state.points.find(p => p.label === label);
+  return rec ? { x: rec.x, y: rec.y } : null;
+}
+
+function addPointToList(P, origin){
+  if(P === INF) return "O";
+  const existing = state.points.find(p => p.x.eq(P.x) && p.y.eq(P.y));
+  if(existing) return existing.label;
+  const label = nextLabel();
+  state.points.push({ x: P.x, y: P.y, label, origin });
+  return label;
+}
+
+/* ---------------- DOM refs ---------------- */
+
+const $ = id => document.getElementById(id);
+const aInput = $("aInput"), bInput = $("bInput"), loadCurveBtn = $("loadCurveBtn");
+const presetSelect = $("presetSelect");
+const maxNumInput = $("maxNumInput"), maxDenInput = $("maxDenInput"), searchBtn = $("searchBtn");
+const equationDisplay = $("equationDisplay"), curveStatus = $("curveStatus"), curveError = $("curveError");
+const pointList = $("pointList"), pointCountLabel = $("pointCountLabel");
+const selectionInfo = $("selectionInfo"), actionRow = $("actionRow");
+const resultBox = $("resultBox"), resultEq = $("resultEq"), resultDec = $("resultDec"), addResultBtn = $("addResultBtn");
+const multBaseSelect = $("multBaseSelect"), nInput = $("nInput"), multBtn = $("multBtn");
+const multTable = $("multTable"), multTableBody = $("multTableBody"), plotMultBtn = $("plotMultBtn");
+const plotSvg = $("plot");
+const zoomInBtn = $("zoomInBtn"), zoomOutBtn = $("zoomOutBtn"), fitBtn = $("fitBtn"), clearPointsBtn = $("clearPointsBtn");
+
+/* ---------------- curve setup ---------------- */
+
+function formatEquation(curve){
+  const aStr = curve.a.toString(), bStr = curve.b.toString();
+  let mid = "";
+  if(!curve.a.isZero()){
+    const sign = curve.a.n < 0n ? "−" : "+";
+    const mag = curve.a.n < 0n ? curve.a.neg().toString() : aStr;
+    mid = " " + sign + " " + (mag === "1" ? "" : mag) + "x";
+  }
+  let tail = "";
+  if(!curve.b.isZero()){
+    const sign = curve.b.n < 0n ? "−" : "+";
+    const mag = curve.b.n < 0n ? curve.b.neg().toString() : bStr;
+    tail = " " + sign + " " + mag;
+  }
+  return "y² = x³" + mid + tail;
+}
+
+function showCurveError(msg){
+  curveError.hidden = !msg;
+  curveError.textContent = msg || "";
+}
+
+function setCurve(a, b){
+  const curve = { a, b };
+  if(isSingular(curve)){
+    showCurveError("This choice of a, b makes the curve singular (4a³ + 27b² = 0) — pick different coefficients.");
+    curveStatus.textContent = "singular — pick another";
+    curveStatus.classList.add("bad");
+    return false;
+  }
+  showCurveError("");
+  curveStatus.textContent = "smooth curve";
+  curveStatus.classList.remove("bad");
+  state.curve = curve;
+  state.points = [];
+  state.selectedIds = [];
+  state.lastResult = null;
+  state.lastConstruction = null;
+  state.view = null; // re-fit to the (now empty) point set on next render
+  state.pointsVisible = true;
+  state.lastMultiples = [];
+  state.plottedMultiples = [];
+  equationDisplay.textContent = formatEquation(curve);
+  aInput.value = a.toString();
+  bInput.value = b.toString();
+  renderAll();
+  return true;
+}
+
+loadCurveBtn.addEventListener("click", () => {
+  try{
+    const a = parseFrac(aInput.value);
+    const b = parseFrac(bInput.value);
+    setCurve(a, b);
+  } catch(e){
+    showCurveError(e.message);
+  }
+});
+
+presetSelect.addEventListener("change", () => {
+  if(!presetSelect.value) return;
+  const [a, b] = presetSelect.value.split(",");
+  setCurve(parseFrac(a), parseFrac(b));
+  presetSelect.value = "";
+});
+
+searchBtn.addEventListener("click", () => {
+  const maxNum = Math.max(1, Math.min(80, parseInt(maxNumInput.value, 10) || 12));
+  const maxDen = Math.max(1, Math.min(16, parseInt(maxDenInput.value, 10) || 4));
+  const found = searchPoints(state.curve, maxNum, maxDen, 48);
+  state.points = found.map(p => ({ x: p.x, y: p.y, label: null, origin: "search" }));
+  state.points.forEach(p => { p.label = nextLabel(); state.points.find(q=>q===p); });
+  // assign labels in order (nextLabel reads state.points, so build incrementally)
+  state.points = [];
+  found.forEach(p => {
+    const label = nextLabel();
+    state.points.push({ x: p.x, y: p.y, label, origin: "search" });
+  });
+  state.selectedIds = [];
+  state.lastResult = null;
+  state.lastConstruction = null;
+  state.view = null; // re-fit to the newly found points
+  state.pointsVisible = true;
+  state.lastMultiples = [];
+  state.plottedMultiples = [];
+  renderAll();
+});
+
+/* ---------------- pan & zoom controls ---------------- */
+
+zoomInBtn.addEventListener("click", () => zoomAtCenter(0.8));
+zoomOutBtn.addEventListener("click", () => zoomAtCenter(1 / 0.8));
+fitBtn.addEventListener("click", () => { fitView(); renderPlot(); });
+
+let dragState = null;
+
+plotSvg.addEventListener("pointerdown", evt => {
+  plotSvg.setPointerCapture(evt.pointerId);
+  dragState = { pointerId: evt.pointerId, startX: evt.clientX, startY: evt.clientY, startView: { ...state.view } };
+  plotSvg.classList.add("dragging");
+});
+plotSvg.addEventListener("pointermove", evt => {
+  if(!dragState || evt.pointerId !== dragState.pointerId || !lastMapper) return;
+  const rect = plotSvg.getBoundingClientRect();
+  const pxScale = SVG_W / rect.width;
+  const dxPixel = (evt.clientX - dragState.startX) * pxScale;
+  const dyPixel = (evt.clientY - dragState.startY) * pxScale;
+  const dxMath = dxPixel / lastMapper.sx;
+  const dyMath = dyPixel / lastMapper.sy;
+  const v0 = dragState.startView;
+  state.view = clampView({
+    xmin: v0.xmin - dxMath, xmax: v0.xmax - dxMath,
+    ymin: v0.ymin + dyMath, ymax: v0.ymax + dyMath
+  });
+  renderPlot();
+});
+function endDrag(evt){
+  if(dragState && evt.pointerId === dragState.pointerId){
+    dragState = null;
+    plotSvg.classList.remove("dragging");
+  }
+}
+plotSvg.addEventListener("pointerup", endDrag);
+plotSvg.addEventListener("pointercancel", endDrag);
+
+plotSvg.addEventListener("wheel", evt => {
+  evt.preventDefault();
+  const mathPt = clientToMath(evt, plotSvg);
+  if(!mathPt) return;
+  const factor = evt.deltaY > 0 ? 1.15 : 1 / 1.15;
+  zoomAtPoint(factor, mathPt.x, mathPt.y);
+}, { passive: false });
+
+plotSvg.addEventListener("dblclick", evt => {
+  const mathPt = clientToMath(evt, plotSvg);
+  if(!mathPt) return;
+  zoomAtPoint(0.55, mathPt.x, mathPt.y);
+});
+
+plotSvg.addEventListener("keydown", evt => {
+  if(!state.view) return;
+  const v = state.view;
+  const stepX = (v.xmax - v.xmin) * 0.08;
+  const stepY = (v.ymax - v.ymin) * 0.08;
+  switch(evt.key){
+    case "ArrowLeft": panView(-stepX, 0); evt.preventDefault(); break;
+    case "ArrowRight": panView(stepX, 0); evt.preventDefault(); break;
+    case "ArrowUp": panView(0, stepY); evt.preventDefault(); break;
+    case "ArrowDown": panView(0, -stepY); evt.preventDefault(); break;
+    case "+": case "=": zoomAtCenter(0.85); evt.preventDefault(); break;
+    case "-": case "_": zoomAtCenter(1 / 0.85); evt.preventDefault(); break;
+    case "0": fitView(); renderPlot(); evt.preventDefault(); break;
+  }
+});
+
+/* ---------------- selection + addition ---------------- */
+
+function toggleSelect(label){
+  const idx = state.selectedIds.indexOf(label);
+  if(idx !== -1){
+    state.selectedIds.splice(idx, 1);
+  } else {
+    state.selectedIds.push(label);
+    if(state.selectedIds.length > 2) state.selectedIds.shift();
+  }
+  state.lastResult = null;
+  state.lastConstruction = null;
+  state.pointsVisible = true;
+  renderAll();
+}
+
+function computeAddition(labelP, labelQ){
+  const P = findPointByLabel(labelP);
+  const Q = findPointByLabel(labelQ);
+  const R = addPoints(P, Q, state.curve);
+  state.lastConstruction = (P !== INF && Q !== INF) ? { P, Q, isDouble: labelP === labelQ } : null;
+  state.lastResult = { labelP, labelQ, point: R };
+  state.pointsVisible = true;
+  renderAll();
+}
+
+function labelText(label){ return label === "O" ? "𝒪" : label; }
+function pointText(label){
+  if(label === "O") return "𝒪 (identity)";
+  const rec = state.points.find(p => p.label === label);
+  return rec ? ("(" + rec.x.toString() + ", " + rec.y.toString() + ")") : label;
+}
+
+/* ---------------- rendering: point list & selection ---------------- */
+
+function renderPointList(){
+  pointList.innerHTML = "";
+  if(state.points.length === 0){
+    const span = document.createElement("span");
+    span.className = "chip empty-state";
+    span.textContent = "no points yet — try “Search points”";
+    pointList.appendChild(span);
+  } else {
+    state.points.forEach(rec => {
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "chip" + (state.selectedIds.includes(rec.label) ? " selected" : "") + (rec.origin === "sum" ? " result" : "");
+      chip.innerHTML = '<span class="tag">' + rec.label + '</span> (' + rec.x.toString() + ', ' + rec.y.toString() + ')';
+      chip.addEventListener("click", () => toggleSelect(rec.label));
+      pointList.appendChild(chip);
+    });
+  }
+  // infinity is always selectable
+  const infChip = document.createElement("button");
+  infChip.type = "button";
+  infChip.className = "chip" + (state.selectedIds.includes("O") ? " selected" : "");
+  infChip.innerHTML = '<span class="tag">O</span> 𝒪 (identity)';
+  infChip.addEventListener("click", () => toggleSelect("O"));
+  pointList.appendChild(infChip);
+
+  pointCountLabel.textContent = state.points.length === 0
+    ? "Search to populate this list."
+    : (state.points.length + " point" + (state.points.length===1?"":"s") + " found (plus the identity 𝒪).");
+}
+
+function renderSelection(){
+  actionRow.innerHTML = "";
+  const [s1, s2] = state.selectedIds;
+  if(!s1){
+    selectionInfo.innerHTML = "Select one or two points below to add them.";
+  } else if(!s2){
+    selectionInfo.innerHTML = "Selected <strong>" + labelText(s1) + "</strong> " + pointText(s1) + ". Select another point to add, or double it below.";
+    const dbl = document.createElement("button");
+    dbl.className = "primary";
+    dbl.textContent = "Double: " + labelText(s1) + " + " + labelText(s1);
+    dbl.addEventListener("click", () => computeAddition(s1, s1));
+    actionRow.appendChild(dbl);
+  } else {
+    selectionInfo.innerHTML = "Selected <strong>" + labelText(s1) + "</strong> " + pointText(s1) + " and <strong>" + labelText(s2) + "</strong> " + pointText(s2) + ".";
+    const add = document.createElement("button");
+    add.className = "primary";
+    add.textContent = "Add " + labelText(s1) + " + " + labelText(s2);
+    add.addEventListener("click", () => computeAddition(s1, s2));
+    actionRow.appendChild(add);
+  }
+
+  if(state.lastResult){
+    const { labelP, labelQ, point } = state.lastResult;
+    resultBox.hidden = false;
+    const opLabel = labelP === labelQ ? ("2·" + labelText(labelP)) : (labelText(labelP) + " + " + labelText(labelQ));
+    if(point === INF){
+      resultEq.textContent = opLabel + " = 𝒪 (point at infinity)";
+      resultDec.textContent = "these two points are inverses of each other";
+    } else {
+      resultEq.textContent = opLabel + " = (" + point.x.toString() + ", " + point.y.toString() + ")";
+      resultDec.textContent = "≈ (" + point.x.toNumber().toFixed(4) + ", " + point.y.toNumber().toFixed(4) + ")";
+    }
+  } else {
+    resultBox.hidden = true;
+  }
+}
+
+addResultBtn.addEventListener("click", () => {
+  if(!state.lastResult || state.lastResult.point === INF) return;
+  addPointToList(state.lastResult.point, "sum");
+  renderAll();
+});
+
+/* ---------------- multiples ---------------- */
+
+function renderMultBaseOptions(){
+  const prev = multBaseSelect.value;
+  multBaseSelect.innerHTML = "";
+  plotMultBtn.disabled = state.lastMultiples.length === 0;
+  if(state.points.length === 0){
+    const opt = document.createElement("option");
+    opt.value = ""; opt.textContent = "select a point first";
+    multBaseSelect.appendChild(opt);
+    multBaseSelect.disabled = true;
+    return;
+  }
+  multBaseSelect.disabled = false;
+  state.points.forEach(rec => {
+    const opt = document.createElement("option");
+    opt.value = rec.label;
+    opt.textContent = rec.label + "  (" + rec.x.toString() + ", " + rec.y.toString() + ")";
+    multBaseSelect.appendChild(opt);
+  });
+  if(state.points.some(p => p.label === prev)) multBaseSelect.value = prev;
+}
+
+multBtn.addEventListener("click", () => {
+  const label = multBaseSelect.value;
+  if(!label) return;
+  const P = findPointByLabel(label);
+  const n = Math.max(1, Math.min(60, parseInt(nInput.value, 10) || 1));
+  multTableBody.innerHTML = "";
+  const computed = [];
+  let running = INF;
+  for(let k = 1; k <= n; k++){
+    running = addPoints(running, P, state.curve);
+    computed.push({ n: k, baseLabel: label, point: running });
+    const tr = document.createElement("tr");
+    const nCell = document.createElement("td");
+    nCell.className = "n-col";
+    nCell.textContent = k + "·" + label;
+    const ptCell = document.createElement("td");
+    const decCell = document.createElement("td");
+    if(running === INF){
+      ptCell.textContent = "𝒪";
+      decCell.textContent = "—";
+    } else {
+      ptCell.textContent = "(" + running.x.toString() + ", " + running.y.toString() + ")";
+      decCell.textContent = "(" + running.x.toNumber().toFixed(4) + ", " + running.y.toNumber().toFixed(4) + ")";
+    }
+    tr.appendChild(nCell); tr.appendChild(ptCell); tr.appendChild(decCell);
+    multTableBody.appendChild(tr);
+  }
+  multTable.hidden = false;
+  state.lastMultiples = computed;
+  state.plottedMultiples = [];
+  plotMultBtn.disabled = false;
+});
+
+plotMultBtn.addEventListener("click", () => {
+  state.plottedMultiples = state.lastMultiples.filter(m => m.point !== INF);
+  state.pointsVisible = true;
+  fitView();
+  renderPlot();
+});
+
+clearPointsBtn.addEventListener("click", () => {
+  state.pointsVisible = false;
+  state.plottedMultiples = [];
+  renderPlot();
+});
+
+/* ---------------- plot ---------------- */
+
+const SVG_W = 640, SVG_H = 480, PAD = 36;
+const MIN_SPAN = 0.02, MAX_SPAN = 4000;
+let lastMapper = null; // {X,Y,sx,sy,offX,offY} from the most recent renderPlot(), used to invert pixel -> math coords
+
+function clampView(v){
+  let spanX = v.xmax - v.xmin, spanY = v.ymax - v.ymin;
+  if(spanX < MIN_SPAN){ const c=(v.xmin+v.xmax)/2; v.xmin=c-MIN_SPAN/2; v.xmax=c+MIN_SPAN/2; }
+  if(spanX > MAX_SPAN){ const c=(v.xmin+v.xmax)/2; v.xmin=c-MAX_SPAN/2; v.xmax=c+MAX_SPAN/2; }
+  if(spanY < MIN_SPAN){ const c=(v.ymin+v.ymax)/2; v.ymin=c-MIN_SPAN/2; v.ymax=c+MIN_SPAN/2; }
+  if(spanY > MAX_SPAN){ const c=(v.ymin+v.ymax)/2; v.ymin=c-MAX_SPAN/2; v.ymax=c+MAX_SPAN/2; }
+  return v;
+}
+
+function fitView(){
+  const extra = state.plottedMultiples.map(m => m.point);
+  state.view = computeBounds(state.curve, state.points.concat(extra));
+}
+
+function zoomAtPoint(factor, mx, my){
+  const v = state.view;
+  state.view = clampView({
+    xmin: mx - (mx - v.xmin) * factor,
+    xmax: mx + (v.xmax - mx) * factor,
+    ymin: my - (my - v.ymin) * factor,
+    ymax: my + (v.ymax - my) * factor
+  });
+  renderPlot();
+}
+
+function zoomAtCenter(factor){
+  const v = state.view;
+  zoomAtPoint(factor, (v.xmin + v.xmax) / 2, (v.ymin + v.ymax) / 2);
+}
+
+function panView(dx, dy){
+  const v = state.view;
+  state.view = clampView({ xmin: v.xmin + dx, xmax: v.xmax + dx, ymin: v.ymin + dy, ymax: v.ymax + dy });
+  renderPlot();
+}
+
+function clientToMath(evt, svg){
+  const rect = svg.getBoundingClientRect();
+  const pxScale = SVG_W / rect.width;
+  const svgX = (evt.clientX - rect.left) * pxScale;
+  const svgY = (evt.clientY - rect.top) * pxScale;
+  if(!lastMapper || !state.view) return null;
+  return {
+    x: state.view.xmin + (svgX - lastMapper.offX) / lastMapper.sx,
+    y: state.view.ymax - (svgY - lastMapper.offY) / lastMapper.sy
+  };
+}
+
+function computeBounds(curve, points){
+  let xs = points.map(p => p.x.toNumber());
+  let xmin = xs.length ? Math.min(...xs) : -3;
+  let xmax = xs.length ? Math.max(...xs) : 3;
+  xmin = Math.min(xmin, -3); xmax = Math.max(xmax, 3);
+  const spanPad = Math.max(1, (xmax - xmin) * 0.25);
+  xmin -= spanPad; xmax += spanPad;
+
+  // sample to find y-range
+  let ymax = 1;
+  const N = 300;
+  for(let i = 0; i <= N; i++){
+    const x = xmin + (xmax - xmin) * i / N;
+    const v = x*x*x + curve.a.toNumber()*x + curve.b.toNumber();
+    if(v > 0) ymax = Math.max(ymax, Math.sqrt(v));
+  }
+  const ys = points.map(p => Math.abs(p.y.toNumber()));
+  if(ys.length) ymax = Math.max(ymax, ...ys);
+  ymax *= 1.25;
+
+  return { xmin, xmax, ymin: -ymax, ymax };
+}
+
+function makeMapper(bounds){
+  // x and y are scaled independently so the plot always fills the available
+  // area — these curves have y growing much faster than x (y ~ x^1.5), and
+  // an equal-aspect fit would squeeze everything into a thin vertical sliver.
+  // Straight lines (the secant/tangent construction) stay straight under
+  // this kind of independent linear scaling, just not at their true angle.
+  const { xmin, xmax, ymin, ymax } = bounds;
+  const innerW = SVG_W - 2*PAD, innerH = SVG_H - 2*PAD;
+  const sx = innerW / (xmax - xmin);
+  const sy = innerH / (ymax - ymin);
+  const offX = PAD, offY = PAD;
+  return {
+    X: x => offX + (x - xmin) * sx,
+    Y: y => offY + (ymax - y) * sy,
+    sx, sy, offX, offY
+  };
+}
+
+function svgEl(tag, attrs){
+  const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+  for(const k in attrs) el.setAttribute(k, attrs[k]);
+  return el;
+}
+
+function renderPlot(){
+  plotSvg.innerHTML = "";
+  plotSvg.setAttribute("viewBox", "0 0 " + SVG_W + " " + SVG_H);
+  const curve = state.curve;
+  if(!state.view) fitView();
+  const bounds = state.view;
+  const M = makeMapper(bounds);
+  lastMapper = M;
+  const css = getComputedStyle(document.documentElement);
+  const col = name => css.getPropertyValue(name).trim();
+
+  const bg = svgEl("rect", { x:0, y:0, width:SVG_W, height:SVG_H, fill: col("--surface-2"), rx: 14 });
+  plotSvg.appendChild(bg);
+
+  // grid
+  const grid = svgEl("g", {});
+  const gxStart = Math.ceil(bounds.xmin), gxEnd = Math.floor(bounds.xmax);
+  const gyStart = Math.ceil(bounds.ymin), gyEnd = Math.floor(bounds.ymax);
+  for(let gx = gxStart; gx <= gxEnd; gx++){
+    const x = M.X(gx);
+    grid.appendChild(svgEl("line", { x1:x, y1:PAD, x2:x, y2:SVG_H-PAD, stroke: col("--line"), "stroke-width": gx===0?1.4:0.6 }));
+  }
+  for(let gy = gyStart; gy <= gyEnd; gy++){
+    const y = M.Y(gy);
+    grid.appendChild(svgEl("line", { x1:PAD, y1:y, x2:SVG_W-PAD, y2:y, stroke: col("--line"), "stroke-width": gy===0?1.4:0.6 }));
+  }
+  plotSvg.appendChild(grid);
+
+  // curve branches: sample densely, break path on sign change
+  const a = curve.a.toNumber(), b = curve.b.toNumber();
+  const N = 700;
+  let upperPath = "", lowerPath = "";
+  let upperOpen = false, lowerOpen = false;
+  for(let i = 0; i <= N; i++){
+    const x = bounds.xmin + (bounds.xmax - bounds.xmin) * i / N;
+    const v = x*x*x + a*x + b;
+    if(v >= 0){
+      const y = Math.sqrt(v);
+      const px = M.X(x), pyU = M.Y(y), pyL = M.Y(-y);
+      upperPath += (upperOpen ? "L" : "M") + px.toFixed(2) + "," + pyU.toFixed(2) + " ";
+      lowerPath += (lowerOpen ? "L" : "M") + px.toFixed(2) + "," + pyL.toFixed(2) + " ";
+      upperOpen = true; lowerOpen = true;
+    } else {
+      upperOpen = false; lowerOpen = false;
+    }
+  }
+  const curveGroup = svgEl("g", { fill:"none", stroke: col("--accent"), "stroke-width": 2.2, "stroke-linecap":"round", "stroke-linejoin":"round" });
+  curveGroup.appendChild(svgEl("path", { d: upperPath }));
+  curveGroup.appendChild(svgEl("path", { d: lowerPath }));
+  plotSvg.appendChild(curveGroup);
+
+  // axes labels area is skipped for simplicity; grid + points communicate scale
+
+  if(state.pointsVisible){
+
+    // construction line (secant/tangent) for the last computed addition
+    if(state.lastConstruction){
+      const { P, Q } = state.lastConstruction;
+      const x1 = P.x.toNumber(), y1 = P.y.toNumber();
+      const x2 = Q.x.toNumber(), y2 = Q.y.toNumber();
+      let m;
+      if(state.lastConstruction.isDouble){
+        m = (3*x1*x1 + a) / (2*y1);
+      } else {
+        m = (y2 - y1) / (x2 - x1);
+      }
+      const lineFn = x => y1 + m*(x - x1);
+      const gx1 = bounds.xmin, gx2 = bounds.xmax;
+      const line = svgEl("line", {
+        x1: M.X(gx1), y1: M.Y(lineFn(gx1)), x2: M.X(gx2), y2: M.Y(lineFn(gx2)),
+        stroke: col("--muted"), "stroke-width": 1.4, "stroke-dasharray": "5 4"
+      });
+      plotSvg.appendChild(line);
+
+      if(state.lastResult && state.lastResult.point !== INF){
+        const R = state.lastResult.point;
+        const rx = R.x.toNumber(), ry = R.y.toNumber();
+        const reflect = svgEl("line", {
+          x1: M.X(rx), y1: M.Y(-ry), x2: M.X(rx), y2: M.Y(ry),
+          stroke: col("--gold"), "stroke-width": 1.4, "stroke-dasharray": "3 3"
+        });
+        plotSvg.appendChild(reflect);
+      }
+    }
+
+    // points found by search or added from a computed sum
+    state.points.forEach(rec => {
+      const px = M.X(rec.x.toNumber()), py = M.Y(rec.y.toNumber());
+      const isSelected = state.selectedIds.includes(rec.label);
+      const isResultOrigin = rec.origin === "sum";
+      const g = svgEl("g", {});
+      g.appendChild(svgEl("circle", {
+        cx: px, cy: py, r: isSelected ? 7.5 : 5.5,
+        fill: isResultOrigin ? col("--gold") : col("--accent"),
+        stroke: isSelected ? col("--ink") : "none",
+        "stroke-width": 2
+      }));
+      const lbl = svgEl("text", {
+        x: px + 9, y: py - 8, "font-family": "IBM Plex Mono, monospace",
+        "font-size": 12, fill: col("--ink")
+      });
+      lbl.textContent = rec.label;
+      g.appendChild(lbl);
+      plotSvg.appendChild(g);
+    });
+
+    // multiples of a point, plotted on request from the "Multiples" panel
+    if(state.plottedMultiples.length){
+      let path = "";
+      state.plottedMultiples.forEach((m, i) => {
+        const px = M.X(m.point.x.toNumber()), py = M.Y(m.point.y.toNumber());
+        path += (i === 0 ? "M" : "L") + px.toFixed(2) + "," + py.toFixed(2) + " ";
+      });
+      plotSvg.appendChild(svgEl("path", {
+        d: path, fill: "none", stroke: col("--gold"), "stroke-width": 1.2, "stroke-dasharray": "2 4", opacity: 0.7
+      }));
+      state.plottedMultiples.forEach(m => {
+        const px = M.X(m.point.x.toNumber()), py = M.Y(m.point.y.toNumber());
+        const g = svgEl("g", {});
+        g.appendChild(svgEl("circle", {
+          cx: px, cy: py, r: 5, fill: col("--surface"), stroke: col("--gold"), "stroke-width": 2
+        }));
+        const lbl = svgEl("text", {
+          x: px + 8, y: py - 7, "font-family": "IBM Plex Mono, monospace",
+          "font-size": 11, fill: col("--gold")
+        });
+        lbl.textContent = m.n + "·" + m.baseLabel;
+        g.appendChild(lbl);
+        plotSvg.appendChild(g);
+      });
+    }
+
+    // highlight result if not yet added to list
+    if(state.lastResult && state.lastResult.point !== INF){
+      const already = state.points.some(p => p.x.eq(state.lastResult.point.x) && p.y.eq(state.lastResult.point.y));
+      if(!already){
+        const R = state.lastResult.point;
+        const px = M.X(R.x.toNumber()), py = M.Y(R.y.toNumber());
+        const star = svgEl("circle", { cx: px, cy: py, r: 7, fill: col("--gold"), stroke: col("--ink"), "stroke-width": 2 });
+        plotSvg.appendChild(star);
+        const lbl = svgEl("text", { x: px + 9, y: py - 8, "font-family": "IBM Plex Mono, monospace", "font-size": 12, fill: col("--ink") });
+        lbl.textContent = "result";
+        plotSvg.appendChild(lbl);
+      }
+    }
+  }
+}
+
+/* ---------------- top-level render ---------------- */
+
+function renderAll(){
+  renderPointList();
+  renderSelection();
+  renderMultBaseOptions();
+  renderPlot();
+}
+
+/* ---------------- init ---------------- */
+
+setCurve(state.curve.a, state.curve.b);
+searchBtn.click();
+
+})();
+</script>
+</body>
+</html>
