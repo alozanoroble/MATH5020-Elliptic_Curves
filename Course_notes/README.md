@@ -2,7 +2,7 @@
 
 Here is the list of lectures and corresponding lecture number.
 
-## Tentative Schedule & Lecture Notes
+## Tentative Schedule & Corresponding Lecture Notes
 
 > *Note: Lecture video recordings are available via the course [YouTube playlist](https://www.youtube.com).*
 
