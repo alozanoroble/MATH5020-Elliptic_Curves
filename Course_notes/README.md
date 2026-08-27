@@ -4,7 +4,7 @@ Here is the list of lectures and corresponding lecture number.
 
 ## Tentative Schedule & Corresponding Lecture Notes
 
-> *Note: Lecture video recordings are available via the course [YouTube playlist](https://www.youtube.com).*
+> *Note: Lecture video recordings are available via the course [YouTube playlist](https://www.youtube.com/playlist?list=PLYpVTXjEi1oe1OeAllJpNhFoI4B7Ws8Yl).*
 
 
 | Lecture | Topic / Title | 
@@ -37,3 +37,7 @@ Here is the list of lectures and corresponding lecture number.
 | **23** | Proof of the weak Mordell-Weil theorem, descent, and heights | 
 | **24** | Torsion points (Nagell-Lutz) and canonical height | 
 | **25** | Canonical height pairing, $\mathbb{Z}$-linear independence, and computing Mordell-Weil |
+| **Extra** | An introduction to group (and Galois) cohomology (part 1) and (part 2) |
+| **26** | Complete 2-descent (part 1), and an example (part 2) |
+| **27** | Example of 2-descent (part 1), and definitions of Selmer and Sha (part 2) |
+| **28** | Selmer and Sha: the fundamental sequence (part 1), twists, homogeneous spaces, and descent (part 2), and an example of descent via 2-isogeny (part 3) |
