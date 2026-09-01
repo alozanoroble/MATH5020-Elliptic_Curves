@@ -8,10 +8,16 @@ More information about the course (including links to the videos by lecture) can
 
 https://alozano.clas.uconn.edu/math5020-elliptic-curves/
 
-The videos for the course can be found here:
+### Videos
 
-https://www.youtube.com/playlist?list=PLYpVTXjEi1oe1OeAllJpNhFoI4B7Ws8Yl
+Here is a list of video playlists that may be useful:
 
-The elliptic curve addition and multiplication app is here:
+- Videos of [lectures for this class](https://www.youtube.com/playlist?list=PLYpVTXjEi1oe1OeAllJpNhFoI4B7Ws8Yl).
+- A [mini-course on elliptic curves](https://www.youtube.com/playlist?list=PLYpVTXjEi1ofzKmhfReVNITVNEhGWslRX).
+- Videos on [elliptic curve cryptography](https://www.youtube.com/playlist?list=PLYpVTXjEi1ocH005_i6IhFlXjUj1BziRX).
+- A [mini-course on Galois representations](https://www.youtube.com/playlist?list=PLYpVTXjEi1oedAJlSOV4mn9dnuT7rVxO3).
+- A list of [video introductions to the LMFDB, Magma, and Sage/CoCalc](https://www.youtube.com/playlist?list=PLYpVTXjEi1odEHr_-4fkbudq-gQnljSso).
 
-**[Rational Points](https://alozanoroble.github.io/MATH5020-Elliptic_Curves/apps/rational-points/)**
+### Apps
+
+* Elliptic curve addition and multiplication app **[Rational Points](https://alozanoroble.github.io/MATH5020-Elliptic_Curves/apps/rational-points/)**
