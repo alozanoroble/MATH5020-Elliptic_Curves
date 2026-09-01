@@ -28,6 +28,8 @@ window.ECApp.katexRender = function (rootEl) {
       window.ECApp.views.renderTopic(root, route.param);
     } else if (route.view === "problem") {
       window.ECApp.views.renderProblem(root, route.param);
+    } else if (route.view === "source") {
+      window.ECApp.views.renderSource(root, route.param);
     } else {
       window.ECApp.views.renderHome(root);
     }
@@ -37,4 +39,15 @@ window.ECApp.katexRender = function (rootEl) {
   }
 
   window.ECApp.router.init(render);
+
+  // A changed Sources filter reshapes home/topic listings and the random
+  // pool, so re-render whichever of those is currently on screen. Problem
+  // and source pages are left alone — you're already looking at something
+  // specific, no reason to yank it away.
+  window.ECApp.sourceFilter.onChange(function () {
+    var route = window.ECApp.router.current();
+    if (route.view === "home" || route.view === "topic") {
+      render(route);
+    }
+  });
 })();

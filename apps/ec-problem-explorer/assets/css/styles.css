@@ -217,6 +217,17 @@ a:hover { text-decoration-color: currentColor; }
 /* ---------------------------------------------------------------- header */
 .view-header { margin-bottom: 28px; }
 .view-lede { color: var(--ink-muted); font-size: 1.05rem; max-width: 60ch; }
+.filter-banner {
+  display: inline-block;
+  margin: 6px 0 0;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--accent-ink);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+.empty-note { color: var(--ink-muted); font-style: italic; }
 
 .breadcrumb {
   display: flex;
@@ -292,6 +303,34 @@ a:hover { text-decoration-color: currentColor; }
   padding: 4px 10px;
   border-radius: 999px;
 }
+
+/* --------------------------------------------------------------- sources */
+.sources-section { margin-top: 44px; padding-top: 32px; border-top: 1px solid var(--line); }
+.sources-heading { font-size: 1.3rem; margin: 0 0 6px; }
+.source-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+.source-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 18px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  text-decoration: none;
+  color: var(--ink);
+}
+.source-card:hover { border-color: var(--accent); }
+.source-card-title { font-size: 1.05rem; margin: 0; }
+.source-card-subtitle { color: var(--accent-ink); font-size: 0.82rem; font-weight: 600; margin: 0; }
+.source-card-desc { color: var(--ink-muted); font-size: 0.88rem; margin: 4px 0 8px; flex: 1; }
+
+.source-topic-group { margin-bottom: 32px; }
+.source-topic-heading { font-size: 1.1rem; margin: 0 0 14px; color: var(--ink-muted); }
 
 /* ---------------------------------------------------------------- problem list */
 .problem-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
@@ -426,8 +465,44 @@ a:hover { text-decoration-color: currentColor; }
   margin: 0 auto;
   padding: 10px 20px;
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
 }
+
+.source-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.source-filter-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ink-muted);
+}
+.source-filter-select {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 6px 30px 6px 12px;
+  min-height: 36px;
+  cursor: pointer;
+  /* a plain, theme-aware chevron so the control still reads as a dropdown
+     without pulling in an image asset */
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: calc(100% - 16px) center, calc(100% - 11px) center;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  color: var(--ink-muted);
+}
+.source-filter-select:hover { border-color: var(--accent); }
 
 .a11y-toggle {
   display: inline-flex;
@@ -487,6 +562,8 @@ a:hover { text-decoration-color: currentColor; }
   .reveal-confirm, .reveal-cancel { width: 100%; justify-content: center; }
   .topbar-inner { justify-content: center; padding: 8px 14px; }
   .a11y-toggle-text { display: none; }
+  .source-filter-label { display: none; }
+  .source-grid { grid-template-columns: 1fr; }
 }
 
 /* ---------------------------------------------------------------- print */

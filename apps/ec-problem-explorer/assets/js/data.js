@@ -16,6 +16,7 @@
 window.EC_DATA = (function () {
   var sources = {
     hw1: {
+      courseId: "uconn-math5020",
       course: "MATH 5020 — The Arithmetic of Elliptic Curves",
       instructor: "Álvaro Lozano-Robledo",
       institution: "University of Connecticut",
@@ -24,6 +25,7 @@ window.EC_DATA = (function () {
       homeworkLabel: "Homework 1"
     },
     hw2: {
+      courseId: "uconn-math5020",
       course: "MATH 5020 — The Arithmetic of Elliptic Curves",
       instructor: "Álvaro Lozano-Robledo",
       institution: "University of Connecticut",
@@ -32,6 +34,7 @@ window.EC_DATA = (function () {
       homeworkLabel: "Homework 2"
     },
     hw3: {
+      courseId: "uconn-math5020",
       course: "MATH 5020 — The Arithmetic of Elliptic Curves",
       instructor: "Álvaro Lozano-Robledo",
       institution: "University of Connecticut",
@@ -40,6 +43,7 @@ window.EC_DATA = (function () {
       homeworkLabel: "Homework 3"
     },
     hw4a: {
+      courseId: "uconn-math5020",
       course: "MATH 5020 — The Arithmetic of Elliptic Curves",
       instructor: "Álvaro Lozano-Robledo",
       institution: "University of Connecticut",
@@ -48,6 +52,7 @@ window.EC_DATA = (function () {
       homeworkLabel: "Homework 4a"
     },
     hw4b: {
+      courseId: "uconn-math5020",
       course: "MATH 5020 — The Arithmetic of Elliptic Curves",
       instructor: "Álvaro Lozano-Robledo",
       institution: "University of Connecticut",
@@ -56,6 +61,7 @@ window.EC_DATA = (function () {
       homeworkLabel: "Homework 4b"
     },
     hw5: {
+      courseId: "uconn-math5020",
       course: "MATH 5020 — The Arithmetic of Elliptic Curves",
       instructor: "Álvaro Lozano-Robledo",
       institution: "University of Connecticut",
@@ -64,14 +70,57 @@ window.EC_DATA = (function () {
       homeworkLabel: "Homework 5"
     },
     hw6: {
+      courseId: "uconn-math5020",
       course: "MATH 5020 — The Arithmetic of Elliptic Curves",
       instructor: "Álvaro Lozano-Robledo",
       institution: "University of Connecticut",
       term: "Fall 2015",
       pdfUrl: "https://github.com/alozanoroble/MATH5020-Elliptic_Curves/blob/main/Homework_sets/MATH-5020-hw6.pdf",
       homeworkLabel: "Homework 6"
+    },
+    ctntEcc: {
+      courseId: "ctnt-2026-ecc",
+      course: "CTNT 2026 — Elliptic Curve Cryptography",
+      instructor: "Álvaro Lozano-Robledo",
+      institution: "Connecticut Summer School in Number Theory (CTNT)",
+      term: "Summer 2026",
+      pdfUrl: "https://github.com/alozanoroble/CTNT-2026/blob/main/CTNT%202026%20-%20Elliptic%20Curve%20Cryptography/CTNT2026_ECC_Exercises.pdf",
+      homeworkLabel: "Suggested Exercises"
+    },
+    book: {
+      courseId: "book-ntg",
+      course: "Number Theory and Geometry",
+      instructor: "Álvaro Lozano-Robledo",
+      institution: "University of Connecticut",
+      term: "book manuscript",
+      pdfUrl: "https://alozano.clas.uconn.edu/number-theory-and-geometry/",
+      homeworkLabel: "Exercises"
     }
   };
+
+  // Courses group sources for the home-page "Sources" section and the
+  // Sources filter dropdown — several `sources[key]` entries (e.g. every
+  // UConn homework) can share one courseId.
+  var courses = [
+    {
+      id: "uconn-math5020",
+      title: "UConn MATH 5020",
+      subtitle: "The Arithmetic of Elliptic Curves",
+      description: "A graduate course on elliptic curves — from Weierstrass equations through the Mordell–Weil theorem — taught by Álvaro Lozano-Robledo at the University of Connecticut."
+    },
+    {
+      id: "ctnt-2026-ecc",
+      title: "CTNT 2026",
+      subtitle: "Elliptic Curve Cryptography",
+      description: "Suggested exercises from the Elliptic Curve Cryptography track of the Connecticut Summer School in Number Theory (CTNT) 2026."
+    },
+    {
+      id: "book-ntg",
+      title: "Number Theory and Geometry",
+      subtitle: "book manuscript",
+      description: "Exercises from Álvaro Lozano-Robledo's book manuscript “Number Theory and Geometry,” drawn from the Introduction and the chapters on cubic equations and elliptic curves."
+    }
+  ];
 
   var topics = [
     {
@@ -98,6 +147,11 @@ window.EC_DATA = (function () {
       id: "mordell-weil",
       title: "Mordell–Weil, Heights & Descent",
       description: "The Mordell–Weil theorem, height pairings, and the descent techniques used to actually compute the rank of $E(\\mathbb{Q})$."
+    },
+    {
+      id: "ecc",
+      title: "Elliptic Curve Cryptography",
+      description: "The same group law, turned into a one-way-ish operation: Diffie–Hellman, ElGamal encryption and signatures, and Lenstra's elliptic-curve factorization algorithm."
     }
   ];
 
@@ -598,8 +652,778 @@ $$\mathrm{rank}_{\mathbb{Z}/m\mathbb{Z}}(E(K)/mE(K)) \le 2\#S + 2\,\mathrm{rank}
         { label: "Hint 2", text: String.raw`For (c)–(d), finding high-rank curves from scratch is a genuinely hard, actively-studied problem — the realistic path is to locate specific published high-rank examples (the literature documents explicit curves with rank $\ge6,8,10$ together with explicit generating points) and then verify the rank *yourself* with Sage/Magma (checking the given points are independent via the height matrix, and, ideally, that the rank isn't higher via a rank-bounding method), rather than attempting to discover such curves unaided.` }
       ],
       solution: unwritten()
+    },
+
+    // ---------------------------------------------------------------
+    // Topic: Elliptic Curve Cryptography (CTNT 2026 suggested exercises)
+    // ---------------------------------------------------------------
+    {
+      id: "ecc-1",
+      topicId: "ecc",
+      title: "An Equation That Isn't an Elliptic Curve",
+      sourceKey: "ctntEcc",
+      pdfLabel: "Exercise 8",
+      statement: String.raw`Show that $y=x^3$ is not an elliptic curve.`,
+      hints: [
+        { label: "Hint 1", text: String.raw`Homogenize the equation (set $x=X/Z$, $y=Y/Z$) to get a projective plane cubic, and find the point(s) at infinity, where $Z=0$.` },
+        { label: "Hint 2", text: String.raw`Check the smoothness condition (all three partial derivatives of the homogeneous polynomial vanishing simultaneously) at the point at infinity you found — you should discover a singular point there, which is exactly why this cubic fails to be an elliptic curve despite being degree $3$.` }
+      ],
+      solution: unwritten()
+    },
+    {
+      id: "ecc-2",
+      topicId: "ecc",
+      title: "Doubling and Tripling a Point by Hand",
+      sourceKey: "ctntEcc",
+      pdfLabel: "Exercise 9",
+      statement: String.raw`Let $E/\mathbb{Q}$ be the elliptic curve $y^2=x^3-2$ and let $P=(3,5)$. Use the geometric definition of the addition on $E$ to find the coordinates of $2P$ and $3P$.`,
+      hints: [
+        { label: "Hint 1", text: String.raw`For $2P$, find the slope of the tangent line to $E$ at $P$ by implicit differentiation ($2y\,dy=3x^2\,dx$), substitute the tangent line back into the curve equation to find the third intersection point, then reflect over the $x$-axis.` },
+        { label: "Hint 2", text: String.raw`For $3P=P+2P$, repeat the same process but with the secant line through $P$ and your computed $2P$ instead of a tangent line.` }
+      ],
+      solution: unwritten()
+    },
+    {
+      id: "ecc-3",
+      topicId: "ecc",
+      title: "Points and Group Structure over 𝔽₇",
+      sourceKey: "ctntEcc",
+      pdfLabel: "Exercise 10",
+      statement: String.raw`Let $E$ be the elliptic curve given by $y^2=x^3+1$ over $\mathbb{F}_7$. Find all the points on $E$ over $\mathbb{F}_7$ and describe the group structure of $E(\mathbb{F}_7)$.`,
+      hints: [
+        { label: "Hint 1", text: String.raw`For each $x\in\mathbb{F}_7$, compute $x^3+1 \bmod 7$ and check whether it's $0$, a nonzero square, or a nonsquare — that tells you how many points share that $x$-coordinate. Don't forget the point at infinity.` },
+        { label: "Hint 2", text: String.raw`Once you know $\#E(\mathbb{F}_7)$, check the order of a couple of the points you found directly — if some point's order already equals $\#E(\mathbb{F}_7)$, the group is cyclic; otherwise compare against the other group of that order.` }
+      ],
+      solution: unwritten()
+    },
+    {
+      id: "ecc-4",
+      topicId: "ecc",
+      title: "The Hasse Bound in Practice",
+      sourceKey: "ctntEcc",
+      pdfLabel: "Exercise 11",
+      statement: String.raw`Let $p$ be a prime and let $E: y^2=x^3+4x+6$.
+
+(a) For what primes $p$ is the curve $E$ an elliptic curve?
+
+(b) For $p=3,5,7,11,13,17,19,4001,4003$, find the number of points on $E(\mathbb{F}_p)$, the difference $(p+1)-\#E(\mathbb{F}_p)$, and $2\sqrt{p}$. Verify that the Hasse bound holds in each case.
+
+(c) Show that $E(\mathbb{F}_{4001})$ is a cyclic group.`,
+      hints: [
+        { label: "Hint 1", text: String.raw`For (a), $E$ fails to be an elliptic curve over $\mathbb{F}_p$ exactly when it's singular mod $p$ — compute the discriminant of $x^3+4x+6$ and find which primes divide it.` },
+        { label: "Hint 2", text: String.raw`For (b), a CAS (Sage/PARI) makes counting points for the larger primes practical. For (c), once you know $\#E(\mathbb{F}_{4001})$, exhibit a specific point and check whether its order already equals that full group order — if so, the group is cyclic (generated by that point).` }
+      ],
+      solution: unwritten()
+    },
+    {
+      id: "ecc-5",
+      topicId: "ecc",
+      title: "A Collision Algorithm for the Elliptic Discrete Log",
+      sourceKey: "ctntEcc",
+      pdfLabel: "Exercise 15",
+      statement: String.raw`Let $p=73$, let $E: y^2=x^3+8x+7$ over $\mathbb{F}_p$, and let $P=(32,53)$ and $Q=(35,47)$. Use a probabilistic collision algorithm to find $n$ such that $n\cdot P = Q$.`,
+      hints: [
+        { label: "Hint 1", text: String.raw`This is Pollard's rho algorithm for the discrete log, adapted to the elliptic-curve group: split $E(\mathbb{F}_{73})$ into a few subsets (e.g. by $x$-coordinate mod 3), and define an iteration that adds $P$, adds $Q$, or doubles the current point depending on which subset it's in — track each iterate as a pair $(a,b)$ with current point $=aP+bQ$.` },
+        { label: "Hint 2", text: String.raw`Once two iterates collide on the same point with different $(a,b)$ pairs, $a_1P+b_1Q=a_2P+b_2Q$ gives $(a_1-a_2)P=(b_2-b_1)Q$. First find $|P|$, the order of $P$ in $E(\mathbb{F}_{73})$; if $\gcd(b_2-b_1,|P|)=1$ you can solve directly for $n$.` }
+      ],
+      solution: unwritten()
+    },
+    {
+      id: "ecc-6",
+      topicId: "ecc",
+      title: "Group Structure over 𝔽₇₃",
+      sourceKey: "ctntEcc",
+      pdfLabel: "Exercise 16",
+      statement: String.raw`Let $p=73$, let $E: y^2=x^3+8x+7$ over $\mathbb{F}_p$. Determine the group structure of $E(\mathbb{F}_{73})$.`,
+      hints: [
+        { label: "Hint 1", text: String.raw`Count $\#E(\mathbb{F}_{73})$ the same way as the $\mathbb{F}_7$ warm-up: for each $x\in\mathbb{F}_{73}$ check whether $x^3+8x+7$ is a square.` },
+        { label: "Hint 2", text: String.raw`Once you have the order, test the order of a few sample points against the possible ways to factor that order into (at most two) cyclic pieces, to decide between cyclic and a genuine product of two smaller cyclic groups.` }
+      ],
+      solution: unwritten()
+    },
+    {
+      id: "ecc-7",
+      topicId: "ecc",
+      title: "Adding Two Points over 𝔽₅",
+      sourceKey: "ctntEcc",
+      pdfLabel: "Exercise 30",
+      statement: String.raw`Let $E$ be the elliptic curve $y^2=x^3+x+1$ defined over the field $\mathbb{F}_5$. Let $P=(0,1)$ and $Q=(2,4)$. Use the formulas of addition on an elliptic curve to compute the point $P\oplus Q$.`,
+      hints: [
+        { label: "Hint 1", text: String.raw`Since $P\ne Q$ and neither is the identity, use the secant-line formula: first compute the slope $\lambda=(y_Q-y_P)/(x_Q-x_P) \bmod 5$ (you'll need a modular inverse mod 5).` },
+        { label: "Hint 2", text: String.raw`With $\lambda$ in hand, $x_{P\oplus Q}=\lambda^2-x_P-x_Q$ and $y_{P\oplus Q}=\lambda(x_P-x_{P\oplus Q})-y_P$, all reduced mod 5.` }
+      ],
+      solution: unwritten()
+    },
+    {
+      id: "ecc-8",
+      topicId: "ecc",
+      title: "Doubling a Point over 𝔽₅",
+      sourceKey: "ctntEcc",
+      pdfLabel: "Exercise 31",
+      statement: String.raw`Let $E$ be the elliptic curve $y^2=x^3+x+1$ defined over the field $\mathbb{F}_5$. Let $Q=(2,4)$. Use the formulas of addition to compute the point $2Q$.`,
+      hints: [
+        { label: "Hint 1", text: String.raw`Doubling uses the tangent-line slope instead of a secant: $\lambda=(3x_Q^2+A)/(2y_Q) \bmod 5$, where $A$ is the coefficient of $x$ in the Weierstrass equation (here $A=1$).` },
+        { label: "Hint 2", text: String.raw`With that $\lambda$, the same combination formulas apply: $x_{2Q}=\lambda^2-2x_Q$ and $y_{2Q}=\lambda(x_Q-x_{2Q})-y_Q$, reduced mod 5.` }
+      ],
+      solution: unwritten()
+    },
+    {
+      id: "ecc-9",
+      topicId: "ecc",
+      title: "An Upper Bound from Hasse's Theorem",
+      sourceKey: "ctntEcc",
+      pdfLabel: "Exercise 32",
+      statement: String.raw`Use Hasse's theorem to give an upper bound for the total number of points on $E(\mathbb{F}_5)$, where $E$ is the elliptic curve $y^2=x^3+x+1$ defined over the field $\mathbb{F}_5$.`,
+      hints: [
+        { label: "Hint 1", text: String.raw`Hasse's theorem bounds $\#E(\mathbb{F}_p)$ within $p+1\pm2\sqrt{p}$ — plug in $p=5$, and remember $\#E(\mathbb{F}_p)$ must be an integer.` },
+        { label: "Hint 2", text: String.raw`Compare your bound to the exact count from the next problem, to see how tight the Hasse bound actually is for such a small prime.` }
+      ],
+      solution: unwritten()
+    },
+    {
+      id: "ecc-10",
+      topicId: "ecc",
+      title: "Listing All the Points over 𝔽₅",
+      sourceKey: "ctntEcc",
+      pdfLabel: "Exercise 33",
+      statement: String.raw`Find all the points on $E(\mathbb{F}_5)$, where $E$ is $y^2=x^3+x+1$ over the field $\mathbb{F}_5$.`,
+      hints: [
+        { label: "Hint 1", text: String.raw`For each of the 5 values of $x\in\mathbb{F}_5$, compute $x^3+x+1 \bmod 5$ and check whether it's $0$, a nonzero square, or a nonsquare in $\mathbb{F}_5$.` },
+        { label: "Hint 2", text: String.raw`Don't forget the point at infinity, and check your total against the Hasse-bound estimate from the previous problem.` }
+      ],
+      solution: unwritten()
+    },
+    {
+      id: "ecc-11",
+      topicId: "ecc",
+      title: "Elliptic Diffie–Hellman with a Precomputed Table",
+      sourceKey: "ctntEcc",
+      pdfLabel: "Exercise 34",
+      statement: String.raw`Let $p=541$ (which is a prime), and let $E$ be the elliptic curve $y^2=x^3+x+1$ defined over $\mathbb{F}_{541}$. Let $P=(72,70)$ on $E(\mathbb{F}_{541})$. The following is a list of the multiples $n\cdot P$ for $1\le n\le 59$, in order:
+
+$(72,70)$, $(424,71)$, $(9,110)$, $(338,159)$, $(255,123)$,
+$(161,528)$, $(147,468)$, $(168,416)$, $(480,353)$, $(454,92)$,
+$(360,174)$, $(264,41)$, $(152,438)$, $(468,56)$, $(437,44)$,
+$(68,447)$, $(459,293)$, $(115,326)$, $(328,507)$, $(278,318)$,
+$(113,117)$, $(534,456)$, $(307,277)$, $(1,57)$, $(491,440)$,
+$(107,249)$, $(465,115)$, $(67,517)$, $(301,61)$, $(301,480)$,
+$(67,24)$, $(465,426)$, $(107,292)$, $(491,101)$, $(1,484)$,
+$(307,264)$, $(534,85)$, $(113,424)$, $(278,223)$, $(328,34)$,
+$(115,215)$, $(459,248)$, $(68,94)$, $(437,497)$, $(468,485)$,
+$(152,103)$, $(264,500)$, $(360,367)$, $(454,449)$, $(480,188)$,
+$(168,125)$, $(147,73)$, $(161,13)$, $(255,418)$, $(338,382)$,
+$(9,431)$, $(424,470)$, $(72,471)$, $\mathcal{O}$,
+
+where $\mathcal{O}$ is the point at infinity. In other words, $P=(72,70)$, $2P=(424,71)$, $3P=(9,110)$, ..., $6P=(161,528)$, etc.
+
+(a) Explain why the order of $P$ in $E(\mathbb{F}_{541})$ is $59$.
+
+(b) Alice and Bob want to set up an elliptic Diffie–Hellman key exchange with $p=541$ and $E$ and $P$ as above. Alice chooses $n_A=10$ as her secret integer. What point $Q_A$ should Alice send to Bob?
+
+(c) Alice and Bob want to set up an elliptic Diffie–Hellman key exchange with $p=541$ and $E$ and $P$ as above. Alice chooses $n_A=10$ as her secret integer, and she receives $Q_B=(459,293)$ from Bob. Determine the secret point that is shared between Alice and Bob.
+
+(d) Eve intercepts a communication between Alice and Bob (not the one above). Eve now knows that Alice sent $Q_A=(534,456)$ to Bob, and Bob sent $Q_B=(255,123)$ to Alice. Determine the secret point that now Alice and Bob share.`,
+      hints: [
+        { label: "Hint 1", text: String.raw`The table already lists $nP$ for $n=1,\dots,59$ with $59P=\mathcal{O}$ — that alone answers (a). For (b), $Q_A$ is by definition $n_A\cdot P$, so it's a direct lookup in the table.` },
+        { label: "Hint 2", text: String.raw`The Diffie–Hellman shared secret is always (one party's secret exponent) times (the point they received) — for (c), find which row of the table equals $Q_B$ (giving you $k$ with $Q_B=kP$), then the shared secret is row $10k\bmod 59$. For (d), Eve doesn't know either secret exponent directly, but with a table this small she doesn't need to: she can look up which rows match $Q_A$ and $Q_B$ to recover *both* secret exponents, then combine them exactly as in (c). This is precisely why real Diffie–Hellman needs a group far too large to tabulate.` }
+      ],
+      solution: unwritten()
+    },
+    {
+      id: "ecc-12",
+      topicId: "ecc",
+      title: "Elliptic ElGamal Encryption and Signatures",
+      sourceKey: "ctntEcc",
+      pdfLabel: "Exercise 35",
+      statement: String.raw`In this exercise $p=541$ and $E$ and $P$ are as in the previous problem.
+
+(a) Alice sets up an elliptic ElGamal cryptosystem with $p=541$ and $E$ and $P$ as in the previous problem. She chooses a private key $n_A=13$, and publishes $Q_A=13P=(152,438)$. Bob wants to send a plaintext $M=(454,449)$ to Alice. Help Bob encrypt his message into a ciphertext $(C_1,C_2)$ to send to Alice.
+
+(b) Using the same elliptic ElGamal system as in part (a), Alice receives a message $(C_1,C_2)=((9,110),(72,70))$ from Bob. What was the plaintext that Bob encrypted?
+
+(c) Samantha wants to create an elliptic curve digital signature using $p=541$, $E$ and $G=P=(72,70)$ as in the previous problem, and $q=59$. Her secret signing key is $s=5$.
+
+i. Compute $V=s\cdot G$.
+
+ii. She chooses a document $d\equiv17\pmod{59}$, and chooses a random element $e\equiv3\pmod{59}$. Compute $e\cdot G$.
+
+iii. Compute the signature $(d,(s_1,s_2))$ for $d\equiv17\pmod{59}$ using $e=3$.`,
+      hints: [
+        { label: "Hint 1", text: String.raw`For (a)–(b), elliptic ElGamal encrypts $M$ as $(C_1,C_2)=(kP,\,M\oplus kQ_A)$ for a random $k$; decryption recovers $M=C_2\ominus n_A\cdot C_1$. Use the table of multiples of $P$ from the previous problem throughout — e.g. to decrypt in (b), find which row is $C_1=(9,110)$ to get $k$.` },
+        { label: "Hint 2", text: String.raw`For (c), $V=sG$ and $eG$ are again table lookups (multiples of $G=P$, reduced mod 59). The signature values follow the same pattern as the plain (non-elliptic) DSA problem earlier in this set: $s_1$ comes from the $x$-coordinate of $eG$ reduced mod $q=59$, and $s_2\equiv e^{-1}(d+s\cdot s_1)\pmod{59}$ — compute $e^{-1}\bmod 59$ first.` }
+      ],
+      solution: unwritten()
+    },
+    {
+      id: "ecc-13",
+      topicId: "ecc",
+      title: "Lenstra's Elliptic Curve Factorization",
+      sourceKey: "ctntEcc",
+      pdfLabel: "Exercise 37",
+      statement: String.raw`Let $N=143$ and $E: y^2=x^3+x-1$ and $P=(1,1)$. Use Lenstra's algorithm to factor $N$, using $E$ and $P$ modulo $N$.`,
+      hints: [
+        { label: "Hint 1", text: String.raw`Lenstra's method tries to compute a large multiple of $P$ (e.g. $k!\cdot P$ for increasing $k$) using the usual doubling/addition formulas, but working modulo $N$ — which isn't prime, so a "slope" computation may need to invert something that isn't actually invertible mod $N$.` },
+        { label: "Hint 2", text: String.raw`The algorithm succeeds exactly when such an inverse fails to exist, which happens precisely when the denominator shares a nontrivial factor with $N$ — $\gcd(\text{denominator}, N)$ then reveals a nontrivial factor of $143$. Start by doubling $P$ and see where the arithmetic breaks down.` }
+      ],
+      solution: unwritten()
+    },
+
+    // ---------------------------------------------------------------
+    // Additions from "Number Theory and Geometry" (book manuscript),
+    // Chapters 1, 15, and 16 — see README for the duplicate-checking
+    // and self-containment criteria used to select these.
+    // ---------------------------------------------------------------
+    {
+      id: "warmups-8",
+      topicId: "warmups",
+      title: "A Line Through Two Points",
+      sourceKey: "book",
+      pdfLabel: "Chapter 1, Exercises",
+      statement: String.raw`Let $P=(1,4)$ and $Q=(4,-2)$ be points in the plane.
+
+(a) Find the equation $y=ax+b$ of the line $L$ through $P$ and $Q$.
+
+(b) Find a formula for all the rational points on $L$.
+
+(c) Find a formula for all the integral points on $L$.
+
+(d) How many points on $L$ have natural-number coordinates, i.e. how many points $R=(x_0,y_0)$ on $L$ have $x_0,y_0\in\mathbb{N}$?`,
+      hints: [
+        { label: "Hint 1", text: String.raw`For (a)-(b), once you have the slope $a$ from the two points, every point on $L$ with rational $x$-coordinate automatically has rational $y$-coordinate (since $y=ax+b$ has rational coefficients) — so "all rational points" is just "let $x$ range over $\mathbb{Q}$."` },
+        { label: "Hint 2", text: String.raw`For (c)-(d), write $a=p/q$ in lowest terms; $y=ax+b$ then forces a divisibility condition on $x$ for $y$ to come out an integer. Work out exactly which $x$ satisfy it, then separately impose positivity for (d).` }
+      ],
+      solution: unwritten()
+    },
+    {
+      id: "warmups-9",
+      topicId: "warmups",
+      title: "Rational Points on a Circle",
+      sourceKey: "book",
+      pdfLabel: "Chapter 1, Exercises",
+      statement: String.raw`Find all the rational points on the circle $x^2+y^2=2$.`,
+      hints: [
+        { label: "Hint 1", text: String.raw`Start from the obvious point $(1,1)$ on the circle, and intersect the circle with a line of rational slope $t$ through it.` },
+        { label: "Hint 2", text: String.raw`Substituting the line into the circle's equation gives a quadratic with one root already known (from the base point); Vieta's formulas hand you the second root as a rational function of $t$.` }
+      ],
+      solution: unwritten()
+    },
+    {
+      id: "warmups-10",
+      topicId: "warmups",
+      title: "Integral and Rational Points on an Ellipse",
+      sourceKey: "book",
+      pdfLabel: "Chapter 1, Exercises",
+      statement: String.raw`Let $C$ be the ellipse given by $x^2+3y^2=784$.
+
+(a) Find all the integral points on $C$.
+
+(b) Find a parametrization of all the rational points on $C$.`,
+      hints: [
+        { label: "Hint 1", text: String.raw`For (a), $3y^2=784-x^2\ge0$ bounds $x$ to a small range — just check each integer $x$ in that range for whether $(784-x^2)/3$ is a perfect square.` },
+        { label: "Hint 2", text: String.raw`For (b), use one integral point from (a) as a base point and intersect $C$ with a line of rational slope through it, exactly as with a circle.` }
+      ],
+      solution: unwritten()
+    },
+    {
+      id: "warmups-11",
+      topicId: "warmups",
+      title: "Points on a Hyperbola",
+      sourceKey: "book",
+      pdfLabel: "Chapter 1, Exercises",
+      statement: String.raw`Let $C$ be the hyperbola given by the equation $x^2-7y^2=2$.
+
+(a) Find all the rational points on $C$.
+
+(b) Find $3$ distinct integral points with positive $x$-coordinate.`,
+      hints: [
+        { label: "Hint 1", text: String.raw`The same chord method works for hyperbolas as for circles and ellipses: find one rational point by inspection, then intersect with a line of slope $t$ through it.` },
+        { label: "Hint 2", text: String.raw`For (b), plug small rational values of the parameter $t$ from your part-(a) parametrization into the formulas and check which give integer coordinates.` }
+      ],
+      solution: unwritten()
+    },
+    {
+      id: "warmups-12",
+      topicId: "warmups",
+      title: "A Hyperbola with No Integral Points",
+      sourceKey: "book",
+      pdfLabel: "Chapter 1, Exercises",
+      statement: String.raw`Show that the hyperbola $C': x^2-5y^2=3$ has no integral points.`,
+      hints: [
+        { label: "Hint 1", text: String.raw`Reduce the equation modulo a small number and check which residues $x^2$ and $5y^2$ can actually take — if $3$ is never an achievable difference, you're done.` },
+        { label: "Hint 2", text: String.raw`Try mod 5 first; if that's inconclusive on its own, mod 4 (or mod 8) rules out the remaining cases.` }
+      ],
+      solution: unwritten()
+    },
+    {
+      id: "warmups-13",
+      topicId: "warmups",
+      title: "Squares That Differ by a Fixed Amount",
+      sourceKey: "book",
+      pdfLabel: "Chapter 1, Exercises",
+      statement: String.raw`(a) Are there two perfect squares (integers of the form $n^2$) that differ by $1$? Write the problem as a Diophantine equation, find all integral solutions, and prove you've found them all.
+
+(b) Find a parametrization of all the rational squares (numbers of the form $t^2$ for $t\in\mathbb{Q}$) that differ by $1$.
+
+(c) Are there two consecutive integers whose product is a perfect square? If so, find all such integers.
+
+(d) Are there three integers $u<v<w$ differing by $5$ (i.e. $u+5=v$ and $v+5=w$) whose product is a perfect square? This one is hard — it suffices to find a single Diophantine equation in two variables that represents the problem.`,
+      hints: [
+        { label: "Hint 1", text: String.raw`For (a), set up $n^2+1=m^2$, i.e. $(m-n)(m+n)=1$ — a factorization argument over the integers finishes it in a couple of lines.` },
+        { label: "Hint 2", text: String.raw`For (c)-(d), integers in a short arithmetic progression are "almost coprime" (consecutive ones are exactly coprime), so unique factorization puts strong constraints on each factor individually if the product is a perfect square — try small cases by hand for (c); for (d), you only need to *write down* one Diophantine equation capturing "$u(u+5)(u+10)$ is a perfect square," not solve it.` }
+      ],
+      solution: unwritten()
+    },
+    {
+      id: "curves-group-law-6",
+      topicId: "curves-group-law",
+      title: "Projectivizing Five Curves",
+      sourceKey: "book",
+      pdfLabel: "Chapter 15, Exercises",
+      statement: String.raw`Find the projectivization of the following affine curves:
+
+(a) $x^2+y^2=2$.
+
+(b) $xy=1$.
+
+(c) $y^2+y=x^3+x$.
+
+(d) $x^3+xy^2+2x^2+y+7=0$.
+
+(e) $x^n+y^n=1$, for any $n\ge2$.`,
+      hints: [
+        { label: "Hint 1", text: String.raw`To projectivize a degree-$d$ affine equation $f(x,y)=0$, substitute $x=X/Z$, $y=Y/Z$, then multiply through by the lowest power of $Z$ that clears every denominator, giving a homogeneous degree-$d$ polynomial.` },
+        { label: "Hint 2", text: String.raw`For (e), the degree $d=n$ itself varies with the problem — track how the homogenizing power of $Z$ depends on $n$.` }
+      ],
+      solution: unwritten()
+    },
+    {
+      id: "curves-group-law-7",
+      topicId: "curves-group-law",
+      title: "Finding Singular Points on Six Curves",
+      sourceKey: "book",
+      pdfLabel: "Chapter 15, Exercises",
+      statement: String.raw`Determine all the singular points (if any) on the following projective curves. If a curve is given in affine form, first find a projectivization.
+
+(a) $XY+YZ+XZ=0$.
+
+(b) $X^2+2XY+Y^2-Z^2=0$.
+
+(c) $y^2+y=x^3$.
+
+(d) $y^2=x(x-1)^2$.
+
+(e) $y^2=x^3-6x^2+12x-8$.
+
+(f) $y^2+xy=x^3$.`,
+      hints: [
+        { label: "Hint 1", text: String.raw`A point is singular exactly when all three partial derivatives of the homogeneous defining polynomial vanish there simultaneously — set up and solve $F=F_X=F_Y=F_Z=0$ for each curve.` },
+        { label: "Hint 2", text: String.raw`For (d)-(e), notice the right-hand side is a cubic in $x$ with a repeated root — that repeated root's $x$-value, together with $y=0$, is exactly where the singularity sits.` }
+      ],
+      solution: unwritten()
+    },
+    {
+      id: "curves-group-law-8",
+      topicId: "curves-group-law",
+      title: "Parametrizing Two Singular Curves",
+      sourceKey: "book",
+      pdfLabel: "Chapter 15, Exercises",
+      statement: String.raw`Parametrize all the rational points on the curves $y^2=x(x-1)^2$ and $y^2=x^3-6x^2+12x-8$.`,
+      hints: [
+        { label: "Hint 1", text: String.raw`Both curves are singular at a point with $y=0$ (find it first — e.g. $(1,0)$ for the first curve). A line of slope $t$ through a singular point automatically meets the curve there with multiplicity $\ge2$, leaving only one further intersection point to solve for.` },
+        { label: "Hint 2", text: String.raw`Substitute $y=t(x-x_0)$, for the singular point $(x_0,0)$, into the curve equation; after factoring out $(x-x_0)^2$, the remaining factor is linear in $x$ and gives your parametrization directly in terms of $t$.` }
+      ],
+      solution: unwritten()
+    },
+    {
+      id: "curves-group-law-9",
+      topicId: "curves-group-law",
+      title: "Long to Short Weierstrass Form",
+      sourceKey: "book",
+      pdfLabel: "Chapter 15, Exercises",
+      statement: String.raw`Find a change of variables that brings the following curves from long to short Weierstrass form:
+
+(a) $y^2=x^3+x^2+1$.
+
+(b) $y^2+y=x^3$.
+
+(c) $y^2+xy=x^3+1$.
+
+(d) $y^2+xy+3y=x^3+2x^2+4x+6$.
+
+(e) $t^2-t/3=s^3-1/27$.`,
+      hints: [
+        { label: "Hint 1", text: String.raw`Complete the square on the left: for $y^2+a_1xy+a_3y$, substituting $y\to y-\tfrac12(a_1x+a_3)$ eliminates the $xy$ and $y$ terms entirely.` },
+        { label: "Hint 2", text: String.raw`Once the equation reads $y^2=x^3+A_2x^2+A_4x+A_6$, complete the cube via $x\to x-\tfrac{A_2}{3}$ to eliminate the $x^2$ term too.` }
+      ],
+      solution: unwritten()
+    },
+    {
+      id: "curves-group-law-10",
+      topicId: "curves-group-law",
+      title: "Clearing Denominators",
+      sourceKey: "book",
+      pdfLabel: "Chapter 15, Exercises",
+      statement: String.raw`Find a change of variables that brings the following curves to a model with integral coefficients:
+
+(a) $y^2=x^3+\tfrac{5}{2}x+\tfrac{3}{4}$.
+
+(b) $y^2+xy+\tfrac{1}{7}y=x^3+1$.
+
+(c) $y^2+\tfrac{1}{2}y=x^3+\tfrac{1}{25}$.`,
+      hints: [
+        { label: "Hint 1", text: String.raw`A substitution $x\to x/u^2$, $y\to y/u^3$ for a well-chosen integer $u$ rescales each coefficient $a_i$ by $u^i$ — pick $u$ to be a common denominator (or a multiple of one).` },
+        { label: "Hint 2", text: String.raw`Track exactly which power of $u$ multiplies each coefficient so you can find the smallest $u$ that clears every denominator at once.` }
+      ],
+      solution: unwritten()
+    },
+    {
+      id: "curves-group-law-11",
+      topicId: "curves-group-law",
+      title: "Minimizing Integral Coefficients",
+      sourceKey: "book",
+      pdfLabel: "Chapter 15, Exercises",
+      statement: String.raw`Find a change of variables that brings the following curves to a model with smaller integral coefficients:
+
+(a) $y^2=x^3+4x^2+320$.
+
+(b) $y^2+7xy+1029y=x^3$.
+
+(c) $y^2+10xy+7000y=x^3+200x^2+370000x$.`,
+      hints: [
+        { label: "Hint 1", text: String.raw`Run the same $x\to x/u^2$, $y\to y/u^3$ substitution as for clearing denominators, but now look for a $u>1$ that divides *out* common factors — the reverse direction.` },
+        { label: "Hint 2", text: String.raw`Factor each coefficient $a_i$ and look for a prime $p$ with $p^i \mid a_i$ for every relevant $i$ simultaneously — that $p$ (or a suitable power) is a valid $u$.` }
+      ],
+      solution: unwritten()
+    },
+    {
+      id: "curves-group-law-12",
+      topicId: "curves-group-law",
+      title: "The Taxicab Transformation",
+      sourceKey: "book",
+      pdfLabel: "Chapter 15, Exercises",
+      statement: String.raw`Find a change of variables from $C: x^3+y^3=d$ to $C': y^2=x^3-432d^2$.`,
+      hints: [
+        { label: "Hint 1", text: String.raw`View $C$ in projective coordinates and use that $[1:-1:0]$ is a point on $C$ at infinity where the tangent line meets $C$ with multiplicity $3$ — moving this point to the new origin and choosing an affine chart centered there is the standard flex-point-to-Weierstrass transformation.` },
+        { label: "Hint 2", text: String.raw`After the linear change of coordinates placing $[1:-1:0]$ at the new origin, finish with the usual complete-the-square and complete-the-cube steps — the constant $432=2^4\cdot27$ falls out of carefully tracking the scaling factors.` }
+      ],
+      solution: unwritten()
+    },
+    {
+      id: "curves-group-law-13",
+      topicId: "curves-group-law",
+      title: "Three General Transformations to Weierstrass Form",
+      sourceKey: "book",
+      pdfLabel: "Chapter 15, Exercises",
+      statement: String.raw`Let $C/\mathbb{Q}$ be an affine curve.
+
+(a) Suppose $C$ is given by $xy^2+ax^2+bxy+cy^2+dx+ey+f=0$. Find an invertible change of variables taking this to $xy^2+gx^2+hxy+jx+ky+l=0$. (Hint: try $X=x+\lambda$, $Y=y$.)
+
+(b) Suppose $C'$ is given by $xy^2+ax^2+bxy+cx+dy+e=0$. Find an invertible change of variables taking this to $y^2+\alpha xy+\beta y=x^3+\gamma x^2+\delta x+\eta$. (Hint: multiply by $x$ and set $X=x$, $Y=xy$; normalize so the coefficients of $y^2$ and $x^3$ are both $1$.)
+
+(c) Suppose $C''$ is given by $y^2+axy+by=x^3+cx^2+dx+e$. Find an invertible change of variables taking this to $y^2=x^3+Ax+B$. (Hint: first eliminate the $xy$ and $y$ terms, then eliminate the $x^2$ term.)
+
+(d) Let $E/\mathbb{Q}: y^2+43xy-210y=x^3-210x^2$. Find an invertible change of variables taking $E$ to the form $y^2=x^3+Ax+B$.`,
+      hints: [
+        { label: "Hint 1", text: String.raw`Parts (a)-(c) are a step-by-step version of one general reduction procedure — work them in order, since each part's output has the shape of the next part's input.` },
+        { label: "Hint 2", text: String.raw`Part (d) is just part (c)'s procedure applied to specific numbers: complete the square in $y$ first (eliminating $xy$ and $y$), then complete the cube in $x$.` }
+      ],
+      solution: unwritten()
+    },
+    {
+      id: "curves-group-law-14",
+      topicId: "curves-group-law",
+      title: "Weierstrass Form via a Different Chart",
+      sourceKey: "book",
+      pdfLabel: "Chapter 15, Exercises",
+      statement: String.raw`Find a Weierstrass form for the following curves by finding their projectivization and then choosing a different affine chart:
+
+(a) $xy^2+x^2y=1$.
+
+(b) $x^3-2x^2y-xy-y^2-y=0$.
+
+(c) $xy^2+x^2y=1+x^2$.`,
+      hints: [
+        { label: "Hint 1", text: String.raw`Homogenize each curve, then look for a point on the projectivization where switching to a different affine chart (e.g. setting $Y=1$ instead of $Z=1$) makes the equation look Weierstrass-shaped.` },
+        { label: "Hint 2", text: String.raw`The right chart is usually the one centered at a rational inflection point (often visible as a point at infinity in the original chart) — once there, apply the usual complete-the-square/cube steps.` }
+      ],
+      solution: unwritten()
+    },
+    {
+      id: "curves-group-law-15",
+      topicId: "curves-group-law",
+      title: "Weierstrass Form from a Given Point",
+      sourceKey: "book",
+      pdfLabel: "Chapter 15, Exercises",
+      statement: String.raw`Find a Weierstrass form for each of the following non-singular curves, using the given rational point $P$:
+
+(a) $2X^3+3X^2Z-XY^2+3XZ^2-Y^2Z+Z^3=0$, with $P=[0,1,1]$.
+
+(b) $X^3+3X^2Y+3XY^2+Y^3-Y^2Z-YZ^2=0$, with $P=[0,0,1]$.
+
+(c) $X^3+XY^2+XZ^2+Z^3+YZ^2=0$, with $P=[0,1,-1]$.
+
+(d) $X^3+Y^3+Z^3+3XYZ=0$.`,
+      hints: [
+        { label: "Hint 1", text: String.raw`Move $P$ to a convenient location (e.g. $[0:1:0]$) via a linear change of coordinates, then pick the affine chart in which $P$ becomes the point at infinity of a Weierstrass-shaped equation.` },
+        { label: "Hint 2", text: String.raw`For (d), first find a rational point on the curve yourself (try simple coordinates by inspection) before applying the same method as (a)-(c).` }
+      ],
+      solution: unwritten()
+    },
+    {
+      id: "curves-group-law-16",
+      topicId: "curves-group-law",
+      title: "Why the Discriminant Detects Singularity",
+      sourceKey: "book",
+      pdfLabel: "Chapter 16, Exercises",
+      statement: String.raw`Let $y^2=f(x)$ be a Weierstrass equation, where $f(x)\in K[x]$ is a monic cubic.
+
+(a) Show that if a polynomial $f(x)$ and its derivative $f'(x)$ both vanish at $\delta$, then $f(x)$ has a double root at $\delta$.
+
+(b) Show that if $y^2=f(x)$ is singular, the singularity must occur at a point $(\delta,0)$ where $\delta$ is a root of $f(x)$.
+
+(c) Show that $(\delta,0)$ is singular if and only if $\delta$ is a double root of $f(x)$. Conclude that the discriminant of $E$ is $0$ if and only if $E$ is singular.`,
+      hints: [
+        { label: "Hint 1", text: String.raw`For (a), use the factor theorem: $f(x)=(x-\delta)g(x)$ since $f(\delta)=0$; differentiate and evaluate at $\delta$ to see what $f'(\delta)=0$ forces about $g(\delta)$.` },
+        { label: "Hint 2", text: String.raw`For (b)-(c), a singular point needs both partial derivatives of $F(x,y)=y^2-f(x)$ to vanish; the $y$-partial forces $y=0$ immediately, reducing everything to a statement purely about $f(x)$ and $f'(x)$, which part (a) already handles.` }
+      ],
+      solution: unwritten()
+    },
+    {
+      id: "curves-group-law-17",
+      topicId: "curves-group-law",
+      title: "The Duplication Formula, Derived",
+      sourceKey: "book",
+      pdfLabel: "Chapter 16, Exercises",
+      statement: String.raw`Let $E: y^2=x^3+Ax+B$ with $A,B\in\mathbb{Q}$, and let $P=(x_0,y_0)$ be a point on $E$ with $y_0\ne0$.
+
+(a) Prove that the $x$-coordinate of $2P$ is $\displaystyle x(2P)=\frac{x_0^4-2Ax_0^2-8Bx_0+A^2}{4y_0^2}$.
+
+(b) Find a formula for $y(2P)$ in terms of $x_0$ and $y_0$.`,
+      hints: [
+        { label: "Hint 1", text: String.raw`For (a), write down the tangent line to $E$ at $P$ (slope $\lambda=(3x_0^2+A)/(2y_0)$ from implicit differentiation), substitute it into the curve equation, and use that $x_0$ is a *double* root of the resulting quartic (the tangent meets $E$ with multiplicity $2$ at $P$) to isolate the third root as $x(2P)$.` },
+        { label: "Hint 2", text: String.raw`For (b), use the same tangent line $y=y_0+\lambda(x-x_0)$ to compute the $y$-value at $x(2P)$, then negate it (reflect over the $x$-axis) to get $y(2P)$ rather than the third intersection point itself.` }
+      ],
+      solution: unwritten()
+    },
+    {
+      id: "curves-group-law-18",
+      topicId: "curves-group-law",
+      title: "An Explicit Map Between Two Curves",
+      sourceKey: "book",
+      pdfLabel: "Chapter 15, Exercises",
+      statement: String.raw`Let $C: V^2=U^4+1$ and $E: y^2=x^3-4x$. Let $\psi(U,V)=\left(\dfrac{2(V+1)}{U^2},\dfrac{4(V+1)}{U^3}\right)$.
+
+(a) Show that if $U\ne0$ and $(U,V)\in C(\mathbb{Q})$, then $\psi(U,V)\in E(\mathbb{Q})$.
+
+(b) Find an inverse function $\varphi: E\to C$ such that $\varphi(\psi(U,V))=(U,V)$.`,
+      hints: [
+        { label: "Hint 1", text: String.raw`For (a), substitute $\psi(U,V)$'s coordinates into $E$'s equation $y^2=x^3-4x$, and use $V^2=U^4+1$ (i.e. $U^4=(V-1)(V+1)$) to simplify.` },
+        { label: "Hint 2", text: String.raw`For (b), work the defining formulas for $\psi$ backwards: from $x=2(V+1)/U^2$ and $y=4(V+1)/U^3$, notice $y/x=2/U$, which recovers $U$ directly in terms of $x,y$ — then back-substitute for $V$.` }
+      ],
+      solution: unwritten()
+    },
+    {
+      id: "curves-group-law-19",
+      topicId: "curves-group-law",
+      title: "The Discriminant of Three Roots Is Even",
+      sourceKey: "book",
+      pdfLabel: "Chapter 16, Exercises",
+      statement: String.raw`Let $e_1,e_2,e_3$ be three distinct integers. Show that $\Delta=(e_1-e_2)(e_2-e_3)(e_1-e_3)$ is always even.`,
+      hints: [
+        { label: "Hint 1", text: String.raw`Among any three integers, look at their residues mod $2$ — by pigeonhole, at least two of $e_1,e_2,e_3$ share the same parity.` },
+        { label: "Hint 2", text: String.raw`If $e_i$ and $e_j$ have the same parity, $e_i-e_j$ is even on its own, which already makes the whole product $\Delta$ even.` }
+      ],
+      solution: unwritten()
+    },
+    {
+      id: "finite-fields-4",
+      topicId: "finite-fields",
+      title: "Is This Point on the Curve?",
+      sourceKey: "book",
+      pdfLabel: "Chapter 16, Exercises",
+      statement: String.raw`Let $E$ be the elliptic curve $y^2=x^3+3x+5$ over the finite field $\mathbb{F}_{13}$. Is $P=(4,4)$ a point on the curve $E$?`,
+      hints: [
+        { label: "Hint 1", text: String.raw`Just substitute: compute both $4^2 \bmod 13$ and $4^3+3\cdot4+5 \bmod 13$ and compare.` },
+        { label: "Hint 2", text: String.raw`If they don't match, $P$ isn't on $E$ — double-check your arithmetic mod 13 carefully, since a single reduction slip is the most common source of error here.` }
+      ],
+      solution: unwritten()
+    },
+    {
+      id: "torsion-galois-6",
+      topicId: "torsion-galois",
+      title: "The Possible Sizes of E(Q)[2]",
+      sourceKey: "book",
+      pdfLabel: "Chapter 16, Exercises",
+      statement: String.raw`Let $E/\mathbb{Q}$ be given by $y^2=f(x)$, with $f(x)\in\mathbb{Z}[x]$ a monic cubic with distinct roots (over $\mathbb{C}$).
+
+(a) Show that $P=(x,y)\in E$ is a torsion point of exact order $2$ if and only if $y=0$ and $f(x)=0$.
+
+(b) Let $E(\mathbb{Q})[2]$ be the subgroup of points $P\in E(\mathbb{Q})$ with $2P=\mathcal{O}$. Show that $\#E(\mathbb{Q})[2]$ may be $1$, $2$, or $4$.
+
+(c) Give examples of three elliptic curves over $\mathbb{Q}$ where $\#E(\mathbb{Q})[2]$ is $1$, $2$, and $4$ respectively.`,
+      hints: [
+        { label: "Hint 1", text: String.raw`For (a)-(b), $E(\mathbb{Q})[2]\setminus\{\mathcal{O}\}$ corresponds exactly to the rational roots of $f(x)$ — and a real cubic with distinct roots has either $1$ or $3$ real roots, of which $0$, $1$, or all $3$ can be rational.` },
+        { label: "Hint 2", text: String.raw`For (c), engineer $f(x)$ directly: an irreducible cubic gives $\#E(\mathbb{Q})[2]=1$; a cubic with exactly one rational root (and an irreducible quadratic factor) gives $2$; a cubic that splits completely over $\mathbb{Q}$ gives $4$.` }
+      ],
+      solution: unwritten()
+    },
+    {
+      id: "torsion-galois-7",
+      topicId: "torsion-galois",
+      title: "Torsion on y² = x³ + p²",
+      sourceKey: "book",
+      pdfLabel: "Chapter 16, Exercises",
+      statement: String.raw`Let $p\ge2$ be a prime and $E_p: y^2=x^3+p^2$.
+
+(a) Show that there is no torsion point $P\in E_p(\mathbb{Q})$ with $y(P)$ equal to $\pm1,\pm p^2,\pm3p,\pm3p^2,$ or $\pm3$.
+
+(b) Prove that $Q=(0,p)$ is a torsion point of exact order $3$.
+
+(c) Conclude that $\{\mathcal{O},Q,2Q\}$ are the only torsion points on $E_p(\mathbb{Q})$.
+
+(Note: for $p=3$, the point $(-2,1)\in E_3(\mathbb{Q})$ is *not* a torsion point.)`,
+      hints: [
+        { label: "Hint 1", text: String.raw`For (a), the Lutz–Nagell theorem says a torsion point must have integer coordinates with $y=0$ or $y^2\mid\Delta(E_p)$ — compute $\Delta(E_p)$ in terms of $p$ and list its divisors to see which $y$-values are even candidates, then rule out the ones listed.` },
+        { label: "Hint 2", text: String.raw`For (b), verify $3Q=\mathcal{O}$ directly with $Q=(0,p)$ using the duplication and addition formulas; for (c), combine (a) and (b) — Lutz–Nagell restricts torsion to a short, checkable list of possible $y$-values, and (a) eliminates all but $0$ and $\pm p$.` }
+      ],
+      solution: unwritten()
+    },
+    {
+      id: "mordell-weil-9",
+      topicId: "mordell-weil",
+      title: "A Family with 5-Torsion",
+      sourceKey: "book",
+      pdfLabel: "Chapter 16, Exercises",
+      statement: String.raw`Let $E_t: y^2+(1-t)xy-ty=x^3-tx^2$ with $t\in\mathbb{Q}$ and $\Delta_t=t^5(t^2-11t-1)\ne0$. Every curve $E_t$ has a subgroup isomorphic to $\mathbb{Z}/5\mathbb{Z}$. Use a computer algebra system to find elliptic curves $E_t$ with torsion $\mathbb{Z}/5\mathbb{Z}$ and rank $0$, $1$, and $2$. Also try to find an $E_t$ with rank as high as possible.`,
+      hints: [
+        { label: "Hint 1", text: String.raw`Pick simple rational values of $t$ (small integers or fractions, avoiding $\Delta_t=0$) and compute the rank of the resulting $E_t$ with a CAS's built-in rank routine — you'll need to try several $t$ before hitting each target rank.` },
+        { label: "Hint 2", text: String.raw`Since $\mathbb{Z}/5\mathbb{Z}\subset E_t(\mathbb{Q})$ always, ranks $0,1,2$ should already turn up among small values of $t$; for a genuinely high rank this becomes a search — vary $t$ over a range and record the rank, watching for outliers.` }
+      ],
+      solution: unwritten()
+    },
+    {
+      id: "mordell-weil-10",
+      topicId: "mordell-weil",
+      title: "Halving an Explicit Point",
+      sourceKey: "book",
+      pdfLabel: "Chapter 16, Exercises",
+      statement: String.raw`The curve $E/\mathbb{Q}: y^2=x^3-157^2x$ has a rational point $Q$ with $$x(Q)=\left(\frac{224403517704336969924557513090674863160948472041}{17824664537857719176051070357934327140032961660}\right)^2.$$ Show that there exists $P\in E(\mathbb{Q})$ with $2P=Q$, and find the coordinates of $P$.`,
+      hints: [
+        { label: "Hint 1", text: String.raw`Since $x(Q)$ is given as a perfect square already, that's a strong hint about where $P$ comes from — use the duplication formula for $x(2P)$ in terms of $x(P)$ and try to solve $x(2P)=x(Q)$.` },
+        { label: "Hint 2", text: String.raw`This is exactly the kind of computation a CAS is built for — set up $x(2P)=x(Q)$ symbolically and let Sage or Magma factor/solve for $x(P)$, then recover $y(P)$ from the curve equation.` }
+      ],
+      solution: unwritten()
+    },
+    {
+      id: "mordell-weil-11",
+      topicId: "mordell-weil",
+      title: "No Rational Solutions via Mod 8",
+      sourceKey: "book",
+      pdfLabel: "Chapter 16, Exercises",
+      statement: String.raw`Show that the system $2Y^2-X^2=34$, $Y^2-Z^2=34$ has no rational solutions with $X,Y,Z\in\mathbb{Q}$.`,
+      hints: [
+        { label: "Hint 1", text: String.raw`Clear denominators first: a rational solution scales up to an integer solution of a related system with no powers of $2$ left in any denominator.` },
+        { label: "Hint 2", text: String.raw`With everything integral, reduce both equations modulo $8$ and check which residues squares can take mod 8 (only $0,1,4$) — show no combination satisfies both equations simultaneously.` }
+      ],
+      solution: unwritten()
+    },
+    {
+      id: "mordell-weil-12",
+      topicId: "mordell-weil",
+      title: "2-Descent by Hand, Four Times",
+      sourceKey: "book",
+      pdfLabel: "Chapter 16, Exercises",
+      statement: String.raw`For each of the following elliptic curves, use the method of $2$-descent to find the rank of $E/\mathbb{Q}$ and generators of $E(\mathbb{Q})/2E(\mathbb{Q})$. Do not use a computer:
+
+(a) $E: y^2=x^3-14931x+220590$.
+
+(b) $E: y^2=x^3-x^2-6x$.
+
+(c) $E: y^2=x^3-37636x$.
+
+(d) $E: y^2=x^3-962x^2+148417x$.`,
+      hints: [
+        { label: "Hint 1", text: String.raw`In each case, first factor the cubic on the right over $\mathbb{Q}$ to find the rational $2$-torsion — (b)-(d) factor completely (full $2$-torsion, so complete $2$-descent applies directly), while (a) may take a bit more work to spot its rational root.` },
+        { label: "Hint 2", text: String.raw`With a full factorization $x(x-e_1)(x-e_2)$ in hand, complete $2$-descent reduces to testing a finite list of squarefree divisors $d$ of the relevant discriminants for local solvability of a torsor equation; for (d), bound the rank first via a general rank bound so you know when you've found enough independent points.` }
+      ],
+      solution: unwritten()
+    },
+    {
+      id: "mordell-weil-13",
+      topicId: "mordell-weil",
+      title: "Rank of a Three-Root Curve",
+      sourceKey: "book",
+      pdfLabel: "Chapter 16, Exercises",
+      statement: String.raw`Find the rank and generators for the rational points on the elliptic curve $y^2=x(x+5)(x+10)$.`,
+      hints: [
+        { label: "Hint 1", text: String.raw`The curve already comes factored with three rational roots ($0,-5,-10$), so full $2$-torsion is rational — set up complete $2$-descent exactly as in the multi-curve problem elsewhere in this collection.` },
+        { label: "Hint 2", text: String.raw`Before grinding through the descent, look for small rational points by inspection (try small integer $x$ near the roots) — an explicit point of infinite order, once found, can be confirmed via the height pairing.` }
+      ],
+      solution: unwritten()
+    },
+    {
+      id: "mordell-weil-14",
+      topicId: "mordell-weil",
+      title: "The Index of a Generating Subgroup",
+      sourceKey: "book",
+      pdfLabel: "Chapter 16, Exercises",
+      statement: String.raw`Let $E$ be an elliptic curve, and suppose the images of $P_1,\dots,P_n\in E(\mathbb{Q})$ in $E(\mathbb{Q})/2E(\mathbb{Q})$ generate that quotient group. Let $G\le E(\mathbb{Q})$ be the subgroup generated by $P_1,\dots,P_n$.
+
+(a) Prove that $E(\mathbb{Q})/G$ is finite.
+
+(b) Show that, depending on the choice of generators $\{P_i\}$ of $E(\mathbb{Q})/2E(\mathbb{Q})$, the size of $E(\mathbb{Q})/G$ may be arbitrarily large.`,
+      hints: [
+        { label: "Hint 1", text: String.raw`For (a), given any $Q\in E(\mathbb{Q})$, its image mod $2E(\mathbb{Q})$ is some combination of the $P_i$'s images, so $Q$ minus that combination lies in $2E(\mathbb{Q})$ — a descent/height argument on the "half" of $Q$ shows only finitely many cosets of $G$ can ever arise.` },
+        { label: "Hint 2", text: String.raw`For (b), pick generators that *are* in the right classes mod $2E(\mathbb{Q})$ but are needlessly large multiples of the "true" minimal generators — e.g. replace a true generator $R$ by $R+2^kS$ for some other rank element $S$ and large $k$: this doesn't change the class mod $2E(\mathbb{Q})$, but shrinks $G$ into a much higher-index subgroup.` }
+      ],
+      solution: unwritten()
+    },
+    {
+      id: "mordell-weil-15",
+      topicId: "mordell-weil",
+      title: "Beyond Fermat's Last Theorem for Cubes",
+      sourceKey: "book",
+      pdfLabel: "Chapter 16, Exercises",
+      statement: String.raw`Fermat's Last Theorem shows that $x^3+y^3=z^3$ has no integer solutions with $xyz\ne0$. Find the first $d\ge1$ such that $x^3+y^3=dz^3$ has infinitely many non-trivial solutions, find a generator for the solutions, and write down a few examples.`,
+      hints: [
+        { label: "Hint 1", text: String.raw`Dividing by $z^3$, this is a question about rational points on $X^3+Y^3=d$ (with $X=x/z$, $Y=y/z$) — transform to Weierstrass form via the taxicab-style transformation elsewhere in this collection, and ask for which small $d$ the resulting elliptic curve has positive rank.` },
+        { label: "Hint 2", text: String.raw`Check $d=1,2,\dots$ in turn: transform each to $y^2=x^3-432d^2$ and test (by hand or CAS) for a point of infinite order — the first $d$ that works is your answer, and a generator there translates back into a generator for the original cubic equation's solutions.` }
+      ],
+      solution: unwritten()
+    },
+    {
+      id: "ecc-14",
+      topicId: "ecc",
+      title: "A Small Discrete Log by Hand",
+      sourceKey: "book",
+      pdfLabel: "Chapter 16, Exercises",
+      statement: String.raw`Let $E$ be the curve $y^2=x^3-2$ over $\mathbb{F}_{17}$, and let $P=(3,5)$. Solve the elliptic curve discrete logarithm problem $x\cdot P=(13,11)$, i.e. find $x\ge1$ with $xP=(13,11)$ in $E(\mathbb{F}_{17})$.`,
+      hints: [
+        { label: "Hint 1", text: String.raw`With a group this small, just compute $P,2P,3P,\dots$ in order using the addition/doubling formulas over $\mathbb{F}_{17}$ until you hit $(13,11)$.` },
+        { label: "Hint 2", text: String.raw`Doubling first (to get $2P,4P,8P$ quickly) and combining is faster than adding $P$ one step at a time — either way this finishes in well under $17$ steps, since $\#E(\mathbb{F}_{17})$ can't exceed the Hasse bound around $17+1+2\sqrt{17}$.` }
+      ],
+      solution: unwritten()
+    },
+    {
+      id: "ecc-15",
+      topicId: "ecc",
+      title: "Discrete Log and a Generator over 𝔽₁₀₃",
+      sourceKey: "book",
+      pdfLabel: "Chapter 16, Exercises",
+      statement: String.raw`Let $E$ be the curve $y^2=x^3-2$ over $\mathbb{F}_{103}$, and let $P=(3,5)$.
+
+(a) Show that the order of $P$ in $E(\mathbb{F}_{103})$ is $91$.
+
+(b) Solve the elliptic curve discrete logarithm problem $x\cdot P=(102,93)$ in $E(\mathbb{F}_{103})$.
+
+(c) Show that $P$ generates $E(\mathbb{F}_{103})$, i.e. every $Q\in E(\mathbb{F}_{103})$ solves $xP=Q$ for some $x$.`,
+      hints: [
+        { label: "Hint 1", text: String.raw`For (a), compute $\#E(\mathbb{F}_{103})$ (by counting or CAS), then check that $91$ divides it and that no proper divisor of $91$ (namely $1,7,13$) already kills $P$.` },
+        { label: "Hint 2", text: String.raw`For (b), a baby-step giant-step search (as elsewhere in this collection) beats brute force for a group this size; for (c), compare $\#E(\mathbb{F}_{103})$ to $91$ — if they're equal, $P$'s order already accounts for the whole group.` }
+      ],
+      solution: unwritten()
     }
   ];
 
-  return { sources: sources, topics: topics, problems: problems };
+  return { sources: sources, courses: courses, topics: topics, problems: problems };
 })();

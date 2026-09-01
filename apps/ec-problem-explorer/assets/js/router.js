@@ -5,9 +5,11 @@ window.ECApp = window.ECApp || {};
 
 window.ECApp.router = (function () {
   var routeHandler = null;
+  var currentRoute = { view: "home", param: null };
 
   // Turns "#/topic/warmups" into {view: "topic", param: "warmups"}
   // "#/problem/mordell-weil-3" into {view: "problem", param: "mordell-weil-3"}
+  // "#/source/uconn-math5020" into {view: "source", param: "uconn-math5020"}
   // anything else (including "", "#", "#/") into {view: "home", param: null}
   function parseHash() {
     var hash = window.location.hash || "";
@@ -21,11 +23,15 @@ window.ECApp.router = (function () {
     if (parts[0] === "problem" && parts[1]) {
       return { view: "problem", param: decodeURIComponent(parts[1]) };
     }
+    if (parts[0] === "source" && parts[1]) {
+      return { view: "source", param: decodeURIComponent(parts[1]) };
+    }
     return { view: "home", param: null };
   }
 
   function handle() {
-    if (routeHandler) routeHandler(parseHash());
+    currentRoute = parseHash();
+    if (routeHandler) routeHandler(currentRoute);
   }
 
   function init(handler) {
@@ -40,5 +46,9 @@ window.ECApp.router = (function () {
     window.location.hash = hash;
   }
 
-  return { init: init, go: go };
+  function current() {
+    return currentRoute;
+  }
+
+  return { init: init, go: go, current: current };
 })();
