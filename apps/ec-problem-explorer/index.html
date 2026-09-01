@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EC Problem Explorer</title>
+<meta name="description" content="Browse elliptic curve practice problems by topic, with hints and solutions gated behind a 'have you tried it yet' warning.">
+<link rel="stylesheet" href="assets/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="assets/css/styles.css">
+<script>
+// Applies a saved accessible-mode preference before first paint, so
+// reloading with it already on doesn't flash the normal palette first.
+(function () {
+  try {
+    if (localStorage.getItem("ec_a11y") === "on") {
+      document.documentElement.setAttribute("data-a11y", "on");
+    }
+  } catch (e) { /* localStorage unavailable (privacy mode, some file:// setups) */ }
+})();
+</script>
+</head>
+<body>
+<noscript>This app needs JavaScript enabled to display anything — it has no server side to fall back to.</noscript>
+
+<a class="skip-link" href="#app-root">Skip to content</a>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <button id="a11y-toggle" class="a11y-toggle" type="button" aria-pressed="false" aria-label="Accessible palette and type">
+      <span class="a11y-toggle-track" aria-hidden="true"><span class="a11y-toggle-thumb"></span></span>
+      <span class="a11y-toggle-text" aria-hidden="true">Accessible palette &amp; type</span>
+      <span class="a11y-toggle-state" aria-hidden="true">Off</span>
+    </button>
+  </div>
+</div>
+
+<main id="app-root" tabindex="-1" aria-live="polite">
+  <!-- Filled in by assets/js/views.js via the router in assets/js/app.js -->
+</main>
+
+<!-- Vendored, no CDN: works offline and won't break if a CDN goes down. -->
+<script src="assets/vendor/katex/katex.min.js"></script>
+<script src="assets/vendor/katex/auto-render.min.js"></script>
+
+<!-- Plain classic scripts (no type="module") so this also runs opened
+     directly from disk via file://, where module/fetch requests are
+     blocked by the browser's CORS rules. Order matters. -->
+<script src="assets/js/data.js"></script>
+<script src="assets/js/router.js"></script>
+<script src="assets/js/reveal.js"></script>
+<script src="assets/js/views.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/a11y.js"></script>
+</body>
+</html>

@@ -21,3 +21,4 @@ Here is a list of video playlists that may be useful:
 ### Apps
 
 * Elliptic curve addition and multiplication app **[Rational Points](https://alozanoroble.github.io/MATH5020-Elliptic_Curves/apps/rational-points/)**
+* Homework problem browser, by topic, with hints and an accessible-mode toggle **[EC Problem Explorer](https://alozanoroble.github.io/MATH5020-Elliptic_Curves/apps/ec-problem-explorer/)**

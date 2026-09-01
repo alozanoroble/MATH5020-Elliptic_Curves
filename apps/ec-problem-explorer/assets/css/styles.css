@@ -1,0 +1,499 @@
+/* EC Problem Explorer — styles.
+   System fonts only (no webfont/CDN dependency, consistent with the
+   vendored-KaTeX, zero-CDN philosophy of the rest of the app) — except
+   Atkinson Hyperlegible below, which is also vendored locally and used
+   only when accessible mode is switched on. */
+
+/* ---- Atkinson Hyperlegible (vendored; accessible-mode only) ----
+   Same two-subset-per-style structure Google Fonts itself serves this
+   family in; unicode-range lets the browser fetch only what it needs. */
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../vendor/atkinson-hyperlegible/AtkinsonHyperlegible-Regular-latinext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../vendor/atkinson-hyperlegible/AtkinsonHyperlegible-Regular-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../vendor/atkinson-hyperlegible/AtkinsonHyperlegible-Italic-latinext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../vendor/atkinson-hyperlegible/AtkinsonHyperlegible-Italic-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("../vendor/atkinson-hyperlegible/AtkinsonHyperlegible-Bold-latinext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("../vendor/atkinson-hyperlegible/AtkinsonHyperlegible-Bold-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: url("../vendor/atkinson-hyperlegible/AtkinsonHyperlegible-BoldItalic-latinext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: url("../vendor/atkinson-hyperlegible/AtkinsonHyperlegible-BoldItalic-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  --bg: #f7f8fa;
+  --surface: #ffffff;
+  --surface-2: #eef0f4;
+  --ink: #1a1d22;
+  --ink-muted: #5b6470;
+  --ink-faint: #889098;
+  --line: #dde1e7;
+  --accent: #2452a3;
+  --accent-ink: #1b3d7a;
+  --accent-contrast: #ffffff;
+  --tone-hint: #0f766e;
+  --tone-hint-bg: #e8f4f2;
+  --tone-solution: #9a3412;
+  --tone-solution-bg: #fbeee6;
+  --shadow: 0 1px 2px rgba(20, 30, 50, 0.05), 0 6px 20px -10px rgba(20, 30, 50, 0.15);
+  --radius: 10px;
+  --font-body: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-heading: Georgia, "Times New Roman", Cambria, serif;
+  --body-line-height: 1.6;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-a11y="on"]) {
+    --bg: #14171c;
+    --surface: #1b1f26;
+    --surface-2: #232833;
+    --ink: #e8eaed;
+    --ink-muted: #9aa3ad;
+    --ink-faint: #6b7480;
+    --line: #2c323d;
+    --accent: #7aa2e3;
+    --accent-ink: #a9c3ee;
+    --accent-contrast: #0e1116;
+    --tone-hint: #4fbfa8;
+    --tone-hint-bg: #172a27;
+    --tone-solution: #e0965a;
+    --tone-solution-bg: #2c2016;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 6px 20px -10px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* ---- Accessible mode: color-vision-safe palette (Okabe–Ito) + Atkinson
+   Hyperlegible type. The three semantic hues (accent/hint/solution) are
+   drawn from Okabe–Ito specifically because that palette is documented to
+   stay mutually distinguishable under protanopia, deuteranopia, and
+   tritanopia — not just "probably fine" colors. Text contrast is pushed
+   toward AAA (near-black-on-white / near-white-on-black) as a second,
+   independent accessibility axis alongside hue-safety. */
+:root[data-a11y="on"] {
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #ececec;
+  --ink: #000000;
+  --ink-muted: #3a3a3a;
+  --ink-faint: #595959;
+  --line: #767676;
+  --accent: #0072b2;
+  --accent-ink: #00507c;
+  --accent-contrast: #ffffff;
+  --tone-hint: #007a58;
+  --tone-hint-bg: #e1f4ee;
+  --tone-solution: #ad4c00;
+  --tone-solution-bg: #fbe9dc;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.15), 0 6px 20px -10px rgba(0, 0, 0, 0.3);
+  --font-body: "Atkinson Hyperlegible", -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-heading: "Atkinson Hyperlegible", -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --body-line-height: 1.7;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-a11y="on"] {
+    --bg: #000000;
+    --surface: #0a0a0a;
+    --surface-2: #1c1c1c;
+    --ink: #ffffff;
+    --ink-muted: #d9d9d9;
+    --ink-faint: #b3b3b3;
+    --line: #8f8f8f;
+    --accent: #56b4e9;
+    --accent-ink: #8ad0f5;
+    --accent-contrast: #00131c;
+    --tone-hint: #4ddba8;
+    --tone-hint-bg: #072019;
+    --tone-solution: #ff9d4d;
+    --tone-solution-bg: #291505;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 6px 20px -10px rgba(0, 0, 0, 0.6);
+  }
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: var(--body-line-height);
+}
+
+h1, h2, h3 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 0 0 0.4em;
+}
+h1 { font-size: 1.9rem; }
+h2 { font-size: 1.4rem; }
+
+p { margin: 0 0 1em; }
+
+a { color: var(--accent-ink); text-decoration-color: var(--line); text-underline-offset: 3px; }
+a:hover { text-decoration-color: currentColor; }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+.skip-link {
+  position: absolute;
+  left: -999px;
+  top: 0;
+  background: var(--accent);
+  color: var(--accent-contrast);
+  padding: 10px 16px;
+  z-index: 10;
+  border-radius: 0 0 6px 0;
+}
+.skip-link:focus { left: 0; }
+
+#app-root {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 32px 20px 80px;
+}
+#app-root:focus { outline: none; }
+
+/* ---------------------------------------------------------------- header */
+.view-header { margin-bottom: 28px; }
+.view-lede { color: var(--ink-muted); font-size: 1.05rem; max-width: 60ch; }
+
+.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  font-size: 0.85rem;
+  color: var(--ink-faint);
+  margin-bottom: 20px;
+}
+.breadcrumb-link { color: var(--ink-muted); }
+.breadcrumb-current { color: var(--ink); font-weight: 600; }
+.breadcrumb-sep { color: var(--ink-faint); }
+
+/* ----------------------------------------------------------------- btns */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 20px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  min-height: 44px;
+}
+.btn:hover { border-color: var(--accent); color: var(--accent-ink); }
+
+.btn-random {
+  background: var(--accent);
+  color: var(--accent-contrast);
+  border-color: var(--accent);
+}
+.btn-random:hover { opacity: 0.92; color: var(--accent-contrast); }
+.btn-random-hero { margin-top: 18px; font-size: 1.02rem; padding: 13px 24px; }
+
+.btn-secondary { background: var(--surface); }
+
+/* ------------------------------------------------------------- topic grid */
+.topic-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+.topic-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 20px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  text-decoration: none;
+  color: var(--ink);
+}
+.topic-card:hover { border-color: var(--accent); }
+.topic-card-title { font-size: 1.15rem; margin: 0; }
+.topic-card-desc { color: var(--ink-muted); font-size: 0.92rem; margin: 0; flex: 1; }
+.topic-card-count {
+  align-self: flex-start;
+  margin-top: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--accent-ink);
+  background: var(--surface-2);
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+/* ---------------------------------------------------------------- problem list */
+.problem-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.problem-list-link {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  text-decoration: none;
+  color: var(--ink);
+}
+.problem-list-link:hover { border-color: var(--accent); }
+.problem-list-index {
+  font-family: Georgia, serif;
+  font-weight: 700;
+  color: var(--ink-faint);
+  min-width: 1.4em;
+}
+.problem-list-title { font-weight: 600; }
+
+/* ------------------------------------------------------------- statement */
+.problem-statement {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 24px;
+  margin-bottom: 18px;
+  font-size: 1.05rem;
+  line-height: 1.75;
+  /* Preserves the blank-line breaks authored in data.js between lettered
+     parts (a), (b), ... without collapsing them to a single space. */
+  white-space: pre-line;
+}
+
+.attribution {
+  border-left: 3px solid var(--line);
+  padding: 4px 0 4px 16px;
+  margin-bottom: 30px;
+  color: var(--ink-muted);
+  font-size: 0.88rem;
+}
+.attribution-line { margin: 0 0 4px; }
+
+/* ------------------------------------------------------------ reveal gate */
+.reveal-section { display: grid; gap: 12px; margin-bottom: 32px; }
+
+.reveal-trigger {
+  width: 100%;
+  text-align: left;
+  padding: 13px 18px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 0.98rem;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 44px;
+}
+.reveal-hint .reveal-trigger:hover { border-color: var(--tone-hint); color: var(--tone-hint); }
+.reveal-solution .reveal-trigger:hover { border-color: var(--tone-solution); color: var(--tone-solution); }
+
+.reveal-panel { margin-top: 8px; }
+
+.reveal-warning {
+  padding: 14px 16px;
+  border-radius: var(--radius);
+  font-size: 0.92rem;
+  margin: 0 0 12px;
+}
+.reveal-hint .reveal-warning { background: var(--tone-hint-bg); color: var(--tone-hint); }
+.reveal-solution .reveal-warning { background: var(--tone-solution-bg); color: var(--tone-solution); }
+
+.reveal-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.reveal-confirm, .reveal-cancel {
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 44px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+}
+.reveal-hint .reveal-confirm { background: var(--tone-hint); border-color: var(--tone-hint); color: #fff; }
+.reveal-solution .reveal-confirm { background: var(--tone-solution); border-color: var(--tone-solution); color: #fff; }
+
+.reveal-content {
+  padding: 16px 18px;
+  border-radius: var(--radius);
+  border: 1px dashed var(--line);
+  background: var(--surface-2);
+  line-height: 1.7;
+  white-space: pre-line;
+}
+.reveal-content:focus { outline: none; }
+.solution-unwritten { color: var(--ink-muted); font-style: italic; margin: 0; }
+
+.problem-footer-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.colophon {
+  margin-top: 48px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+  color: var(--ink-faint);
+  font-size: 0.8rem;
+}
+
+/* KaTeX inherits surrounding color rather than forcing black, so it reads
+   correctly in dark mode too. */
+.katex { color: inherit; }
+
+/* ------------------------------------------------------------- a11y bar */
+.topbar {
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+}
+.topbar-inner {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.a11y-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 6px 14px 6px 6px;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 600;
+  min-height: 36px;
+}
+.a11y-toggle:hover { border-color: var(--accent); }
+
+.a11y-toggle-track {
+  position: relative;
+  width: 34px;
+  height: 20px;
+  border-radius: 999px;
+  background: var(--line);
+  flex-shrink: 0;
+  transition: background-color 0.15s ease;
+}
+.a11y-toggle-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--surface);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  transition: transform 0.15s ease;
+}
+.a11y-toggle[aria-pressed="true"] .a11y-toggle-track { background: var(--accent); }
+.a11y-toggle[aria-pressed="true"] .a11y-toggle-thumb { transform: translateX(14px); }
+
+.a11y-toggle-state {
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-muted);
+  min-width: 2.2em;
+}
+.a11y-toggle[aria-pressed="true"] .a11y-toggle-state { color: var(--accent-ink); }
+
+/* --------------------------------------------------------------- mobile */
+@media (max-width: 560px) {
+  #app-root { padding: 20px 14px 60px; }
+  h1 { font-size: 1.5rem; }
+  .problem-statement { padding: 18px; font-size: 1rem; }
+  .problem-footer-nav { flex-direction: column; align-items: stretch; }
+  .problem-footer-nav .btn { justify-content: center; }
+  .reveal-actions { flex-direction: column; }
+  .reveal-confirm, .reveal-cancel { width: 100%; justify-content: center; }
+  .topbar-inner { justify-content: center; padding: 8px 14px; }
+  .a11y-toggle-text { display: none; }
+}
+
+/* ---------------------------------------------------------------- print */
+@media print {
+  .topbar, .breadcrumb, .btn-random, .problem-footer-nav, .skip-link { display: none; }
+  .reveal-trigger { display: none; }
+  .reveal-panel:not(:has(.reveal-content)) { display: none; }
+  body { background: #fff; color: #000; }
+  .problem-statement, .attribution { box-shadow: none; border-color: #ccc; }
+}
